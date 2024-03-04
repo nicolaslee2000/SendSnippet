@@ -2,30 +2,66 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 .tabContainer {
-  position: relative;
   max-width: 980px;
   min-width: 500px;
-  min-height: 400px;
-  margin: 0 auto;
-  padding: 0 20px 40px;
+  margin: 0;
+  margin-bottom: 20px;
+  padding: 0;
+  outline: none;
 }
-
-/**/
-/* auto generated CSS start */
-/**/
-.pcss3t {
+.tab {
+  transition: all 0.2s;
+  -o-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -webkit-transition: all 0.2s;
+}
+.tab-content-container {
+  background: #fff;
+  list-style: none;
+  position: relative;
+  display: block;
+  overflow: hidden;
   margin: 0;
   padding: 0;
   border: 0;
   outline: none;
-  font-size: 0;
-  text-align: left;
+  font-size: 13px;
+  width: 100%;
+  height: 400px;
 }
-.pcss3t > input {
+.tab-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* #tab3 {
+  margin-bottom: 0;
+  padding-bottom: 5px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  color: #2b82d9;
+  opacity: 1;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  transition: all 0.1s;
+} */
+
+/**/
+/* auto generated CSS start */
+/**/
+.tabContainer > input {
   position: absolute;
   left: -9999px;
 }
-.pcss3t > label {
+.tabContainer > label {
   position: relative;
   display: inline-block;
   margin: 0;
@@ -33,14 +69,14 @@
   border: 0;
   outline: none;
   cursor: pointer;
-  transition: all 0.1s;
-  -o-transition: all 0.1s;
+  transition: all 0.2s;
+  /* -o-transition: all 0.1s;
   -ms-transition: all 0.1s;
   -moz-transition: all 0.1s;
-  -webkit-transition: all 0.1s;
+  -webkit-transition: all 0.1s; */
 }
 
-.pcss3t > ul {
+.tabContainer > ul {
   list-style: none;
   position: relative;
   display: block;
@@ -51,7 +87,7 @@
   outline: none;
   font-size: 13px;
 }
-.pcss3t > ul > li {
+.tabContainer > ul > li {
   position: absolute;
   width: 100%;
   overflow: auto;
@@ -65,16 +101,16 @@
   -moz-transition: all 0.5s;
   -webkit-transition: all 0.5s;
 }
-.pcss3t > .tab-content-first:checked ~ ul .tab-content-first,
-.pcss3t > .tab-content-2:checked ~ ul .tab-content-2,
-.pcss3t > .tab-content-3:checked ~ ul .tab-content-3,
-.pcss3t > .tab-content-4:checked ~ ul .tab-content-4,
-.pcss3t > .tab-content-5:checked ~ ul .tab-content-5,
-.pcss3t > .tab-content-6:checked ~ ul .tab-content-6,
-.pcss3t > .tab-content-7:checked ~ ul .tab-content-7,
-.pcss3t > .tab-content-8:checked ~ ul .tab-content-8,
-.pcss3t > .tab-content-9:checked ~ ul .tab-content-9,
-.pcss3t > .tab-content-last:checked ~ ul .tab-content-last {
+.tabContainer > .tab-content-first:checked ~ ul .tab-content-first,
+.tabContainer > .tab-content-2:checked ~ ul .tab-content-2,
+.tabContainer > .tab-content-3:checked ~ ul .tab-content-3,
+.tabContainer > .tab-content-4:checked ~ ul .tab-content-4,
+.tabContainer > .tab-content-5:checked ~ ul .tab-content-5,
+.tabContainer > .tab-content-6:checked ~ ul .tab-content-6,
+.tabContainer > .tab-content-7:checked ~ ul .tab-content-7,
+.tabContainer > .tab-content-8:checked ~ ul .tab-content-8,
+.tabContainer > .tab-content-9:checked ~ ul .tab-content-9,
+.tabContainer > .tab-content-last:checked ~ ul .tab-content-last {
   z-index: 1;
   top: 0;
   left: 0;
@@ -90,276 +126,39 @@
 /**/
 /* auto height */
 /**/
-.pcss3t-height-auto > ul {
+/* .tabContainer-height-auto > ul {
   height: auto !important;
 }
-.pcss3t-height-auto > ul > li {
+.tabContainer-height-auto > ul > li {
   position: static;
   display: none;
   height: auto !important;
 }
-.pcss3t-height-auto > .tab-content-first:checked ~ ul .tab-content-first,
-.pcss3t-height-auto > .tab-content-2:checked ~ ul .tab-content-2,
-.pcss3t-height-auto > .tab-content-3:checked ~ ul .tab-content-3,
-.pcss3t-height-auto > .tab-content-4:checked ~ ul .tab-content-4,
-.pcss3t-height-auto > .tab-content-5:checked ~ ul .tab-content-5,
-.pcss3t-height-auto > .tab-content-last:checked ~ ul .tab-content-last {
+.tabContainer-height-auto > .tab-content-first:checked ~ ul .tab-content-first,
+.tabContainer-height-auto > .tab-content-2:checked ~ ul .tab-content-2,
+.tabContainer-height-auto > .tab-content-3:checked ~ ul .tab-content-3,
+.tabContainer-height-auto > .tab-content-4:checked ~ ul .tab-content-4,
+.tabContainer-height-auto > .tab-content-5:checked ~ ul .tab-content-5,
+.tabContainer-height-auto > .tab-content-last:checked ~ ul .tab-content-last {
   display: block;
-}
-
-/**/
-/* grid */
-/**/
-.pcss3t .grid-row {
-  margin-top: 20px;
-}
-.pcss3t .grid-row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-.pcss3t .grid-row:first-child {
-  margin-top: 0;
-}
-.pcss3t .grid-col {
-  display: block;
-  float: left;
-  margin-left: 2%;
-}
-.pcss3t .grid-col:first-child {
-  margin-left: 0;
-}
-.pcss3t .grid-col .inner {
-  padding: 10px 0;
-  border-radius: 5px;
-  background: #f2f2f2;
-  text-align: center;
-}
-.pcss3t .grid-col-1 {
-  width: 15%;
-}
-.pcss3t .grid-col-2 {
-  width: 32%;
-}
-.pcss3t .grid-col-3 {
-  width: 49%;
-}
-.pcss3t .grid-col-4 {
-  width: 66%;
-}
-.pcss3t .grid-col-5 {
-  width: 83%;
-}
-.pcss3t .grid-col-offset-1 {
-  margin-left: 19%;
-}
-.pcss3t .grid-col-offset-1:first-child {
-  margin-left: 17%;
-}
-.pcss3t .grid-col-offset-2 {
-  margin-left: 36%;
-}
-.pcss3t .grid-col-offset-2:first-child {
-  margin-left: 34%;
-}
-.pcss3t .grid-col-offset-3 {
-  margin-left: 53%;
-}
-.pcss3t .grid-col-offset-3:first-child {
-  margin-left: 51%;
-}
-.pcss3t .grid-col-offset-4 {
-  margin-left: 70%;
-}
-.pcss3t .grid-col-offset-4:first-child {
-  margin-left: 68%;
-}
-.pcss3t .grid-col-offset-5:first-child {
-  margin-left: 85%;
-}
-
-/**/
-/* typography */
-/**/
-.pcss3t .typography {
-  color: #666;
-}
-.pcss3t .typography h1,
-.pcss3t .typography h2,
-.pcss3t .typography h3,
-.pcss3t .typography h4,
-.pcss3t .typography h5,
-.pcss3t .typography h6 {
-  margin: 40px 0 0 0;
-  padding: 0;
-  font-family: Gabriela, Georgia, serif;
-  text-align: left;
-  color: #333;
-}
-.pcss3t .typography h1 {
-  font-size: 40px;
-  line-height: 60px;
-  text-shadow: 3px 3px rgba(0, 0, 0, 0.1);
-}
-.pcss3t .typography h2 {
-  font-size: 32px;
-  line-height: 48px;
-  text-shadow: 2px 2px rgba(0, 0, 0, 0.1);
-}
-.pcss3t .typography h3 {
-  font-size: 26px;
-  line-height: 38px;
-  text-shadow: 1px 1px rgba(0, 0, 0, 0.1);
-}
-.pcss3t .typography h4 {
-  font-size: 20px;
-  line-height: 30px;
-}
-.pcss3t .typography h5 {
-  font-size: 15px;
-  line-height: 23px;
-  text-transform: uppercase;
-}
-.pcss3t .typography h6 {
-  font-size: 13px;
-  line-height: 20px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-.pcss3t .typography p {
-  margin: 20px 0 0 0;
-  padding: 0;
-  line-height: 20px;
-  text-align: left;
-}
-.pcss3t .typography ul,
-.pcss3t .typography ol {
-  list-style: none;
-  margin: 20px 0 0 0;
-  padding: 0;
-}
-.pcss3t .typography li {
-  position: relative;
-  margin-top: 5px;
-  padding-left: 20px;
-}
-.pcss3t .typography li ul,
-.pcss3t .typography li ol {
-  margin-top: 5px;
-}
-.pcss3t .typography ul li:before {
-  content: "";
-  position: absolute;
-  top: 8px;
-  left: 0;
-  width: 6px;
-  height: 4px;
-  background: #404040;
-}
-.pcss3t .typography ol {
-  counter-reset: list1;
-}
-.pcss3t .typography ol > li:before {
-  counter-increment: list1;
-  content: counter(list1) ".";
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-.pcss3t .typography a {
-  text-decoration: underline;
-  color: #1889e6;
-}
-.pcss3t .typography a:hover {
-  text-decoration: none;
-}
-.pcss3t .typography .pic {
-  padding: 4px;
-  border: 1px dotted #ccc;
-}
-.pcss3t .typography .pic img {
-  display: block;
-}
-.pcss3t .typography .pic-right {
-  float: right;
-  margin: 0 0 10px 20px;
-}
-.pcss3t .typography .link {
-  text-decoration: underline;
-  color: #1889e6;
-  cursor: pointer;
-}
-.pcss3t .typography .link:hover {
-  text-decoration: none;
-}
-.pcss3t .typography h1:first-child,
-.pcss3t .typography h2:first-child,
-.pcss3t .typography h3:first-child,
-.pcss3t .typography h4:first-child,
-.pcss3t .typography h5:first-child,
-.pcss3t .typography h6:first-child,
-.pcss3t .typography p:first-child {
-  margin-top: 0;
-}
-.pcss3t .typography .text-center {
-  text-align: center;
-}
-.pcss3t .typography .text-right {
-  text-align: right;
-}
+} */
 
 /**/
 /* steps */
 /**/
-.pcss3t-steps > label {
+.tabContainer-steps > label {
   cursor: default;
 }
-
+/* 
 /**/
 /* animation effects */
 /**/
-.pcss3t-effect-scale > ul > li {
+.tabContainer-effect-scale > ul > li {
   -webkit-transform: scale(0.1, 0.1);
+  transform: scale(0.1, 0.1);
 }
-.pcss3t-effect-rotate > ul > li {
-  -webkit-transform: rotate(180deg);
-}
-.pcss3t-effect-slide-top > ul > li {
+.tabContainer-effect-slide-top > ul > li {
   top: -40px;
-}
-.pcss3t-effect-slide-right > ul > li {
-  left: 80px;
-}
-.pcss3t-effect-slide-bottom > ul > li {
-  top: 40px;
-}
-.pcss3t-effect-slide-left > ul > li {
-  left: -80px;
-}
-
-/*----------------------------------------------------------------------------*/
-/*                                   LAYOUTS                                  */
-/*----------------------------------------------------------------------------*/
-
-/**/
-/* top right */
-/**/
-.pcss3t-layout-top-right {
-  text-align: right;
-}
-
-/**/
-/* top center */
-/**/
-.pcss3t-layout-top-center {
-  text-align: center;
-}
-
-/**/
-/* top combi */
-/**/
-.pcss3t > .right {
-  float: right;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -376,10 +175,10 @@
 /* phone */
 /**/
 @media screen and (max-width: 767px) {
-  .pcss3t > label {
+  .tabContainer > label {
     display: block;
   }
-  .pcss3t > .right {
+  .tabContainer > .right {
     float: none;
   }
 }
@@ -391,30 +190,30 @@
 /**/
 /* default */
 /**/
-.pcss3t > label {
+.tabContainer > label {
   padding: 0 20px;
   background: #e5e5e5;
   font-size: 13px;
   line-height: 49px;
 }
-.pcss3t > label:hover {
+.tabContainer > label:hover {
   background: #f2f2f2;
 }
-.pcss3t > input:checked + label {
+.tabContainer > input:checked + label {
   background: #fff;
 }
-.pcss3t > ul {
+.tabContainer > ul {
   background: #fff;
   text-align: left;
 }
-.pcss3t-steps > label:hover {
+.tabContainer-steps > label:hover {
   background: #e5e5e5;
 }
 
 /**/
 /* theme 1 */
 /**/
-.pcss3t-theme-1 > label {
+.tabContainer-theme-1 > label {
   margin: 0 5px 5px 0;
   border-radius: 5px;
   background: #fff;
@@ -422,11 +221,11 @@
   color: #808080;
   opacity: 0.8;
 }
-.pcss3t-theme-1 > label:hover {
+.tabContainer-theme-1 > label:hover {
   background: #fff;
   opacity: 1;
 }
-.pcss3t-theme-1 > input:checked + label {
+.tabContainer-theme-1 > input:checked + label {
   margin-bottom: 0;
   padding-bottom: 5px;
   border-bottom-right-radius: 0;
@@ -434,23 +233,23 @@
   color: #2b82d9;
   opacity: 1;
 }
-.pcss3t-theme-1 > ul {
+.tabContainer-theme-1 > ul {
   border-radius: 5px;
   box-shadow: 0 3px rgba(0, 0, 0, 0.2);
 }
-.pcss3t-theme-1 > .tab-content-first:checked ~ ul {
+.tabContainer-theme-1 > .tab-content-first:checked ~ ul {
   border-top-left-radius: 0;
 }
 @media screen and (max-width: 767px) {
-  .pcss3t-theme-1 > label {
+  .tabContainer-theme-1 > label {
     margin-right: 0;
   }
-  .pcss3t-theme-1 > input:checked + label {
+  .tabContainer-theme-1 > input:checked + label {
     margin-bottom: 5px;
     padding-bottom: 0;
     border-radius: 5px;
   }
-  .pcss3t-theme-1 > .tab-content-first:checked ~ ul {
+  .tabContainer-theme-1 > .tab-content-first:checked ~ ul {
     border-top-left-radius: 5px;
   }
 }
@@ -462,7 +261,7 @@
 /**/
 /* height */
 /**/
-.pcss3t > ul,
-.pcss3t > ul > li {
+.tabContainer > ul,
+.tabContainer > ul > li {
   height: 370px;
 }

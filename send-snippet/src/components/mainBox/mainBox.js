@@ -1,7 +1,7 @@
 import React from "react";
-import "./mainBox.css";
-import TabContainer from "../tabContainer/tabContainer";
-export default function mainBox() {
+import "./MainBox.css";
+import TabContainer from "../TabContainer/TabContainer";
+export default function MainBox() {
   return (
     <div>
       <div className="mainBox-title">

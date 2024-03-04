@@ -1,8 +1,8 @@
 import React from "react";
-import MainBox from "../mainBox/mainBox";
 import icon from "../../assets/icons/github.png";
-import "./layout.css";
-export default function layout() {
+import "./Layout.css";
+import MainBox from "../MainBox/MainBox";
+export default function Layout() {
   return (
     <div id="layout-container">
       <MainBox />

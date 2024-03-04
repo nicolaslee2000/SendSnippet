@@ -1,7 +1,10 @@
-import React from 'react'
+import React from "react";
 
-export default function receiveTab() {
+export default function ReceiveTab() {
   return (
-    <div>receiveTab</div>
-  )
+    <div className="tab-content">
+      <input type="text" placeholder="code" />
+      <button>download</button>
+    </div>
+  );
 }
