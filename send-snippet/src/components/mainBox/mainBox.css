@@ -3,6 +3,9 @@
   font-size: 80px;
   margin-bottom: 30px;
   text-shadow: 1px 2px 2px rgba(0, 0, 0, 0.65);
+  margin-top: 0;
+  text-align: center;
+  color: #fff;
 }
 
 .mainBox-title h3 {
@@ -17,4 +20,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+h1 {
+  padding: 40px 0 20px;
+  font: 40px/60px Georgia, serif;
+  text-align: center;
+  text-shadow: 3px 3px rgba(0, 0, 0, 0.1);
+  color: #fff;
 }
