@@ -1,5 +1,5 @@
 import "./App.css";
-import Layout from "./components/gg/Layout";
+import Layout from "./components/Layout/Layout";
 
 function App() {
   return (
