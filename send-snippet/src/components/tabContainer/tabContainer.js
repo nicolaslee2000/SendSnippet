@@ -4,7 +4,9 @@ import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
 import SendTab from "../tabs/SendTab/SendTab";
 
 export default function TabContainer() {
+  //idle, sendTab, sent, receiveTab, receive
   const [status, setStatus] = useState("idle");
+  const [loading, setLoading] = useState(false);
   return (
     <div className="tabContainer">
       <div className="tabContainer tabContainer-effect-scale">

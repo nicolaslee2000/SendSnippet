@@ -7,7 +7,11 @@ export default function Layout() {
     <div id="layout-container">
       <MainBox />
       <div id="footer">
-        <a href="https://github.com/nicolaslee2000/SendSnippet">
+        <a
+          href="https://github.com/nicolaslee2000/SendSnippet"
+          target="_blank"
+          rel="noreferrer"
+        >
           <img src={icon} alt="Icon" />
         </a>
       </div>
