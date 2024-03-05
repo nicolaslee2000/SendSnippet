@@ -1,7 +1,219 @@
-#tabContainer {
-  width: 500px;
+@import url(https://fonts.googleapis.com/css?family=Gabriela);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+.tabContainer {
+  max-width: 980px;
+  min-width: 500px;
+  margin: 0;
+  margin-bottom: 20px;
+  padding: 0;
+  outline: none;
+}
+.tab {
+  transition: all 0.2s;
+  -o-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -webkit-transition: all 0.2s;
+}
+.tab-content-container {
+  background: #fff;
+  list-style: none;
+  position: relative;
+  display: block;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  font-size: 13px;
+  width: 100%;
   height: 400px;
-  -webkit-box-shadow: 0px 0px 22px -9px rgba(0, 0, 0, 0.58);
-  -moz-box-shadow: 0px 0px 22px -9px rgba(0, 0, 0, 0.58);
-  box-shadow: 0px 0px 22px -9px rgba(0, 0, 0, 0.58);
+}
+.tab-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+/**/
+/* auto generated CSS start */
+/**/
+.tabContainer > input {
+  position: absolute;
+  left: -9999px;
+}
+.tabContainer > label {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* -o-transition: all 0.1s;
+  -ms-transition: all 0.1s;
+  -moz-transition: all 0.1s;
+  -webkit-transition: all 0.1s; */
+}
+
+.tabContainer > ul {
+  list-style: none;
+  position: relative;
+  display: block;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  font-size: 13px;
+}
+.tabContainer > ul > li {
+  position: relative;
+  width: 100%;
+  overflow: auto;
+  padding: 30px 40px 40px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  opacity: 0;
+  transition: all 0.5s;
+  -o-transition: all 0.5s;
+  -ms-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+}
+.tabContainer > .tab-content-first:checked ~ ul .tab-content-first,
+.tabContainer > .tab-content-2:checked ~ ul .tab-content-2 {
+  z-index: 1;
+  top: 0;
+  left: 0;
+  opacity: 1;
+  -webkit-transform: scale(1, 1);
+  transform: scale(1, 1);
+}
+
+/*----------------------------------------------------------------------------*/
+/*                                 EXTENSIONS                                 */
+/*----------------------------------------------------------------------------*/
+
+/**/
+/* auto height */
+/**/
+/* .tabContainer-height-auto > ul {
+  height: auto !important;
+}
+.tabContainer-height-auto > ul > li {
+  position: static;
+  display: none;
+  height: auto !important;
+}
+.tabContainer-height-auto > .tab-content-first:checked ~ ul .tab-content-first,
+.tabContainer-height-auto > .tab-content-2:checked ~ ul .tab-content-2,
+.tabContainer-height-auto > .tab-content-3:checked ~ ul .tab-content-3,
+.tabContainer-height-auto > .tab-content-4:checked ~ ul .tab-content-4,
+.tabContainer-height-auto > .tab-content-5:checked ~ ul .tab-content-5,
+.tabContainer-height-auto > .tab-content-last:checked ~ ul .tab-content-last {
+  display: block;
+} */
+
+/* 
+/**/
+/* animation effects */
+/**/
+.tabContainer-effect-scale > ul > li {
+  -webkit-transform: scale(0.1, 0.1);
+  transform: scale(0.1, 0.1);
+}
+.tabContainer-effect-slide-top > ul > li {
+  top: -40px;
+}
+
+/*----------------------------------------------------------------------------*/
+/*                               RESPONSIVENESS                               */
+/*----------------------------------------------------------------------------*/
+
+/**/
+/* pad */
+/**/
+@media screen and (max-width: 980px) {
+}
+
+/**/
+/* phone */
+/**/
+@media screen and (max-width: 767px) {
+  .tabContainer > label {
+    display: block;
+  }
+  .tabContainer > .right {
+    float: none;
+  }
+}
+
+/*----------------------------------------------------------------------------*/
+/*                                   THEMES                                   */
+/*----------------------------------------------------------------------------*/
+
+/**/
+/* default */
+/**/
+.tabContainer > label {
+  padding: 0 20px;
+  background: #e5e5e5;
+  font-size: 18px;
+  line-height: 49px;
+  margin: 0 5px 5px 0;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 0 2px rgba(0, 0, 0, 0.2);
+  color: #808080;
+  opacity: 0.8;
+}
+.tabContainer > label:hover {
+  background: #fff;
+  opacity: 1;
+}
+.tabContainer > input:checked + label {
+  background: #fff;
+  margin-bottom: 0;
+  padding-bottom: 5px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  color: #2b82d9;
+  opacity: 1;
+}
+.tabContainer > ul {
+  background: #fff;
+  text-align: left;
+  border-radius: 5px;
+  box-shadow: 0 3px rgba(0, 0, 0, 0.2);
+}
+
+.tabContainer > .tab-content-first:checked ~ ul {
+  border-top-left-radius: 0;
+}
+@media screen and (max-width: 767px) {
+  .tabContainer > label {
+    margin-right: 0;
+  }
+  .tabContainer > input:checked + label {
+    margin-bottom: 5px;
+    padding-bottom: 0;
+    border-radius: 5px;
+  }
+  .tabContainer > .tab-content-first:checked ~ ul {
+    border-top-left-radius: 5px;
+  }
+}
+
+/*----------------------------------------------------------------------------*/
+/*                               CUSTOMIZATION                                */
+/*----------------------------------------------------------------------------*/
+
+/**/
+/* height */
+/**/
+.tabContainer > ul,
+.tabContainer > ul > li {
+  height: 370px;
 }
