@@ -1,7 +1,7 @@
 import React from "react";
 import icon from "../../assets/icons/github.png";
 import "./Layout.css";
-import MainBox from "../mmmainbox/MainBox";
+import MainBox from "../MainBox/MainBox";
 export default function Layout() {
   return (
     <div id="layout-container">
