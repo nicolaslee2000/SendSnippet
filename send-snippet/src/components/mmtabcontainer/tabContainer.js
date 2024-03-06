@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./TabContainer.css";
-import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
-import SendTab from "../tabs/SendTab/SendTab";
+import ReceiveTab from "../tabs/rrReceiveTab/ReceiveTab";
+import SendTab from "../tabs/ssSendtab/SendTab";
 
 export default function TabContainer() {
   //idle, sendTab, sent, receiveTab, receive
