@@ -8,7 +8,8 @@ export default function Layout() {
       <MainBox />
       <div id="footer">
         <a
-          href="https://github.com/nicolaslee2000/SendSnippet"
+          // href="https://github.com/nicolaslee2000/SendSnippet"
+          href="https://stackoverflow.com/questions/72595827/arrange-entrypoint-for-firebase-json-file-in-github-workflow"
           target="_blank"
           rel="noreferrer"
         >
