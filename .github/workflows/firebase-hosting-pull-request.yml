@@ -16,7 +16,6 @@ jobs:
       - run: cd send-snippet && npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          entryPoint: ./send-snippet
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SENDSNIPPET }}'
           projectId: sendsnippet
