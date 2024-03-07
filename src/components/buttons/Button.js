@@ -12,7 +12,7 @@ export default function Button(props) {
       onClick={onClick}
       disabled={loading}
     >
-      {loading ? "" : text}
+      {loading ? "" : props.icon ? "aa" : text}
     </button>
   );
 }

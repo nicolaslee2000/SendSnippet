@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "./TabContainer.css";
 import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
 import SendTab from "../tabs/SendTab/SendTab";
@@ -8,7 +8,8 @@ export default function TabContainer() {
   //idle, pending, loading
   const [status, setStatus] = useState("idle");
   const [tab, setTab] = useState(1);
-
+  const ref1 = useRef(null);
+  const ref2 = useRef(null);
   return (
     <div className="tabs-container">
       <div className="tabs">
@@ -50,8 +51,9 @@ export default function TabContainer() {
             timeout={300}
             classNames="tab-content-transition-container"
             unmountOnExit
+            nodeRef={ref1}
           >
-            <div>
+            <div ref={ref1}>
               <SendTab status={status} setStatus={setStatus} />
             </div>
           </CSSTransition>
@@ -60,8 +62,9 @@ export default function TabContainer() {
             timeout={300}
             classNames="tab-content-transition-container"
             unmountOnExit
+            nodeRef={ref2}
           >
-            <div>
+            <div ref={ref2}>
               <ReceiveTab status={status} setStatus={setStatus} />
             </div>
           </CSSTransition>
