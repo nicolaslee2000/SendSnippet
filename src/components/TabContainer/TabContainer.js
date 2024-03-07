@@ -2,48 +2,70 @@ import React, { useState } from "react";
 import "./TabContainer.css";
 import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
 import SendTab from "../tabs/SendTab/SendTab";
+import { CSSTransition } from "react-transition-group";
 
 export default function TabContainer() {
-  //idle, sendTab, sent, receiveTab, receive
+  //idle, pending, loading
   const [status, setStatus] = useState("idle");
-  // const [loading, setLoading] = useState(false);
+  const [tab, setTab] = useState(1);
+
   return (
-    <div className="tabContainer">
-      <div className="tabContainer tabContainer-effect-scale">
+    <div className="tabs-container">
+      <div className="tabs">
         <input
           type="radio"
-          name="tabContainer"
-          checked
+          checked={tab === 1}
           id="tab1"
-          className="tab-content-first"
           readOnly
           disabled={status !== "idle"}
+          onClick={(e) => {
+            setTab(1);
+          }}
         />
-        <label htmlFor="tab1">
-          <i className="icon-bolt"></i>Send
+        <label htmlFor="tab1" className="tab">
+          Send
         </label>
-
         <input
           type="radio"
-          name="tabContainer"
           id="tab2"
-          className="tab-content-2"
           readOnly
+          checked={tab === 2}
           disabled={status !== "idle"}
+          onClick={(e) => {
+            setTab(2);
+          }}
         />
-        <label htmlFor="tab2">
-          <i className="icon-picture"></i>Receive
+        <label htmlFor="tab2" className="tab">
+          Receive
         </label>
-
-        <ul>
-          <li className="tab-content-first">
-            <SendTab status={status} setStatus={setStatus} />
-          </li>
-
-          <li className="tab-content-2">
-            <ReceiveTab status={status} setStatus={setStatus} />
-          </li>
-        </ul>
+      </div>
+      <div
+        className="tabContent-container"
+        style={tab === 1 ? { borderTopLeftRadius: 0 } : { borderRadius: "5px" }}
+      >
+        <div className="absolute-helper-container">
+          {/* TODO: UseRef */}
+          <CSSTransition
+            in={tab === 1}
+            timeout={300}
+            classNames="tab-content-transition-container"
+            unmountOnExit
+          >
+            <div>
+              <SendTab status={status} setStatus={setStatus} />
+            </div>
+          </CSSTransition>
+          <CSSTransition
+            in={tab === 2}
+            timeout={300}
+            classNames="tab-content-transition-container"
+            unmountOnExit
+          >
+            <div>
+              <ReceiveTab status={status} setStatus={setStatus} />
+            </div>
+          </CSSTransition>
+        </div>
       </div>
     </div>
   );
