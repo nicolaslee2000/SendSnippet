@@ -1,29 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import "./TabContainer.css";
 import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
 import SendTab from "../tabs/SendTab/SendTab";
-import { CSSTransition, Transition } from "react-transition-group";
+import { CSSTransition } from "react-transition-group";
 
 export default function TabContainer() {
   //idle, pending, loading
   const [status, setStatus] = useState("idle");
   const [tab, setTab] = useState(1);
-  const [inProp, setInProp] = useState(false);
-  const nodeRef1 = useRef(null);
-  const nodeRef2 = useRef(null);
-  const duration = 300;
 
-  const defaultStyle = {
-    transition: `opacity ${duration}ms ease-in-out`,
-    opacity: 0,
-  };
-
-  const transitionStyles = {
-    entering: { opacity: 1 },
-    entered: { opacity: 1 },
-    exiting: { opacity: 0 },
-    exited: { opacity: 0 },
-  };
   return (
     <div className="tabs-container">
       <div className="tabs">
@@ -35,7 +20,6 @@ export default function TabContainer() {
           disabled={status !== "idle"}
           onClick={(e) => {
             setTab(1);
-            setInProp(true);
           }}
         />
         <label htmlFor="tab1" className="tab">
@@ -49,7 +33,6 @@ export default function TabContainer() {
           disabled={status !== "idle"}
           onClick={(e) => {
             setTab(2);
-            setInProp(false);
           }}
         />
         <label htmlFor="tab2" className="tab">
@@ -72,7 +55,6 @@ export default function TabContainer() {
               <SendTab status={status} setStatus={setStatus} />
             </div>
           </CSSTransition>
-
           <CSSTransition
             in={tab === 2}
             timeout={300}
