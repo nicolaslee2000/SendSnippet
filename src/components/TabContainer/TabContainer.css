@@ -38,6 +38,7 @@
   -moz-transition: all 0.2s;
   -webkit-transition: all 0.2s;
 }
+
 .tab:hover {
   opacity: 1;
 }
@@ -58,7 +59,7 @@ input:checked + .tab {
   border: 0;
   width: 100%;
   height: 100%;
-  padding: 30px 40px 40px;
+  /* padding: 30px 40px 40px; */
   box-sizing: border-box;
   text-align: left;
   border-radius: 5px;
@@ -68,9 +69,45 @@ input:checked + .tab {
   -ms-transition: all 0.5s;
   -moz-transition: all 0.5s;
   -webkit-transition: all 0.5s;
+  padding: 30px 40px 40px;
+  overflow: hidden;
 }
-
-
+.absolute-helper-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+.tab-content {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.tab-content-transition-container-enter {
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  transform: translateX(100%);
+}
+.tab-content-transition-container-enter-active {
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  transform: translateX(0);
+  transition: all 300ms;
+}
+.tab-content-transition-container-exit {
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  transform: translateX(0);
+}
+.tab-content-transition-container-exit-active {
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  transform: translateX(-150%);
+  transition: all 300ms;
+}
 /* .tab-content-container {
   background: #fff;
   list-style: none;
