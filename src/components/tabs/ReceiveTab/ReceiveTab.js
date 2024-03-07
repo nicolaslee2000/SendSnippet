@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import "./ReceiveTab.css";
 import { CSSTransition } from "react-transition-group";
 import Button from "../../buttons/Button";
@@ -25,6 +25,7 @@ export default function ReceiveTab(props) {
   const resetStates = () => {
     setKey(0);
     setCopied(false);
+    console.log(key);
   };
   return (
     <div className="tab-content" id="receiveTab-container">
