@@ -115,6 +115,7 @@ export default function SendTab(props) {
               Expires in: {Math.floor(counter / 60)}:
               {counter - Math.floor(counter / 60) * 60}
             </div>
+            {/* TODO: key copy on click */}
             <div>{code}</div>
             <div>
               <QRCode value={qrlink} size={50}></QRCode>
