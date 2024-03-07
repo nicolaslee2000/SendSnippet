@@ -28,8 +28,14 @@ export default function ReceiveTab(props) {
   };
   return (
     <div className="tab-content" id="receiveTab-container">
-      <CSSTransition in={copied} unmountOnExit timeout={500} nodeRef={refAlert}>
-        <div ref={refAlert}>
+      <CSSTransition
+        in={copied}
+        unmountOnExit
+        timeout={300}
+        nodeRef={refAlert}
+        className="alert-copied-transition-container"
+      >
+        <div ref={refAlert} className="alertCopied-container">
           <AlertCopied setCopied={setCopied} />
         </div>
       </CSSTransition>
@@ -62,6 +68,7 @@ export default function ReceiveTab(props) {
       >
         <div ref={ref2}>
           <div className="key-container"></div>
+          {/* TODO: open link option */}
           <div className="cancelButton-container">
             <Button
               text="OK"

@@ -108,6 +108,7 @@ export default function SendTab(props) {
         nodeRef={ref2}
       >
         <div ref={ref2}>
+          {/* TODO: key expired alert message */}
           <div className="key-container">
             <div>Waiting...</div>
             <div>Enter the key on receiving device</div>
