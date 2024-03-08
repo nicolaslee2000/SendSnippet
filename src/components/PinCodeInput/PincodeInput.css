@@ -1,0 +1,4 @@
+#pincode-container{
+    display: flex;
+    column-gap: 8px;
+}

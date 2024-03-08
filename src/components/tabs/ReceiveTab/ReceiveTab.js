@@ -4,6 +4,7 @@ import { CSSTransition } from "react-transition-group";
 import Button from "../../buttons/Button";
 import downloadIcon from "../../../assets/icons/downloadIcon24.png";
 import AlertCopied from "../../AlertCopied/AlertCopied";
+import PincodeInput from "../../PincodeInput/PincodeInput";
 
 export default function ReceiveTab(props) {
   const status = props.status;
@@ -48,7 +49,9 @@ export default function ReceiveTab(props) {
         nodeRef={ref1}
       >
         <div ref={ref1}>
-          <div className="receive-key-container">asdfs</div>
+          <div className="receive-key-container">
+            <PincodeInput />
+          </div>
           {/* TODO: download on enter */}
           <div className="sendButton-container">
             <Button
@@ -68,7 +71,9 @@ export default function ReceiveTab(props) {
         nodeRef={ref2}
       >
         <div ref={ref2}>
-          <div className="key-container"></div>
+          <div className="key-container">
+            <PincodeInput />
+          </div>
           {/* TODO: open link option */}
           <div className="cancelButton-container">
             <Button
