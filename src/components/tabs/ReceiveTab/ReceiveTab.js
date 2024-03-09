@@ -4,7 +4,7 @@ import { CSSTransition } from "react-transition-group";
 import Button from "../../buttons/Button";
 import downloadIcon from "../../../assets/icons/downloadIcon24.png";
 import AlertCopied from "../../AlertCopied/AlertCopied";
-import PincodeInput from "../../PincodeInput/PincodeInput";
+import PincodeInput from "../../ff/PincodeInput";
 
 export default function ReceiveTab(props) {
   const DIGIT = 4;
