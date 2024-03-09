@@ -10,7 +10,7 @@ export default function ReceiveTab(props) {
   const DIGIT = 4;
   const status = props.status;
   const setStatus = props.setStatus;
-  const [digitKey, setDigitKey] = useState(Array(DIGIT).fill(""));
+  const [digitKey, setDigitKey] = useState(Array(DIGIT).fill());
   const [copied, setCopied] = useState(false);
   const ref1 = useRef(null);
   const ref2 = useRef(null);

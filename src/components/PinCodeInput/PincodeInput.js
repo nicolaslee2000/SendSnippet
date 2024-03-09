@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import PinBox from "./PinBox/PinBox";
 import "./PincodeInput.css";
 import { CSSTransition } from "react-transition-group";
 
@@ -11,7 +10,22 @@ export default function PincodeInput(props) {
   //for shake animation when entered with wrong/incomplete key
   const [shake, setShake] = useState(false);
   const containerRef = useRef(null);
-
+  const handleChange = (e, i) => {
+    const changedKey = digitKey;
+    changedKey[i] = e.target.value;
+    setDigitKey(changedKey);
+    console.log(typeof digitKey);
+    console.log(typeof props.digitKey);
+    console.log(digitKey);
+    console.log(props.digitKey);
+  };
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const clipboardText = e.clipboardData.getData("text");
+    if (/^\d{4}$/.test(clipboardText)) {
+      props.setDigitKey(clipboardText.split(""));
+    }
+  };
   return (
     <CSSTransition
       in={shake}
@@ -21,16 +35,21 @@ export default function PincodeInput(props) {
       nodeRef={containerRef}
     >
       <div id="pincode-container" ref={containerRef}>
-        {[...Array(digitKey.length).keys()].map((i) => {
+        {digitKey.map((digit, i) => {
           return (
-            <PinBox
+            <input
               key={i}
-              index={i}
-              autofocus={i === 0}
-              digitKey={digitKey}
-              setDigitKey={setDigitKey}
-              pinboxRefs={pinboxRefs}
-              setShake={setShake}
+              className="pinbox"
+              placeholder="_"
+              maxLength="1"
+              autoComplete="no"
+              autoFocus={i === 0}
+              value={digit}
+              onChange={(e) => handleChange(e, i)}
+              ref={pinboxRefs[i]}
+              // onKeyDown={() => {}}
+              onFocus={() => {}}
+              onPaste={handlePaste}
             />
           );
         })}
