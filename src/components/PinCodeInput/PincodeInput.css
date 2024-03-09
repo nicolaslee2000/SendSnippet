@@ -1,0 +1,70 @@
+#pincode-container {
+  display: inline-flex;
+  column-gap: 8px;
+}
+.pincode-transition-container.enter {
+  animation: shake 0.3s ease-in-out;
+}
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
+}
+.pinbox {
+  color: #141414;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 31.68px;
+  text-align: center;
+  padding: 10px 8px 10px 8px;
+  border: 1px solid #adadad;
+  border-radius: 4px;
+  outline: none;
+  height: 64px;
+  width: 50px;
+}
+
+.pinbox:focus {
+  border: 1px solid #497e76;
+}
+.pinbox:focus::placeholder {
+  color: transparent;
+}
+.pinbox[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+.pinbox::-webkit-outer-spin-button,
+.pinbox::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

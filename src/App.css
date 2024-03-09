@@ -1,3 +1,4 @@
+
 html,
 body {
   background: #bdcbe5;
@@ -7,4 +8,7 @@ body {
 .App {
   margin: 0;
   padding: 0;
+}
+* {
+  font-family: "Lexend", sans-serif;
 }

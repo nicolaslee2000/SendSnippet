@@ -4,11 +4,13 @@ import { CSSTransition } from "react-transition-group";
 import Button from "../../buttons/Button";
 import downloadIcon from "../../../assets/icons/downloadIcon24.png";
 import AlertCopied from "../../AlertCopied/AlertCopied";
+import PincodeInput from "../../PincodeInput/PincodeInput";
 
 export default function ReceiveTab(props) {
+  const DIGIT = 4;
   const status = props.status;
   const setStatus = props.setStatus;
-  const [key, setKey] = useState(0);
+  const [digitKey, setDigitKey] = useState(Array(DIGIT).fill());
   const [copied, setCopied] = useState(false);
   const ref1 = useRef(null);
   const ref2 = useRef(null);
@@ -23,9 +25,8 @@ export default function ReceiveTab(props) {
     resetStates();
   };
   const resetStates = () => {
-    setKey(0);
+    setDigitKey(Array(DIGIT).fill("_"));
     setCopied(false);
-    console.log(key);
   };
   return (
     <div className="tab-content" id="receiveTab-container">
@@ -48,7 +49,13 @@ export default function ReceiveTab(props) {
         nodeRef={ref1}
       >
         <div ref={ref1}>
-          <div className="receive-key-container">asdfs</div>
+          <div className="receive-key-container">
+            <PincodeInput
+              digitKey={digitKey}
+              setDigitKey={setDigitKey}
+              DIGIT={DIGIT}
+            />
+          </div>
           {/* TODO: download on enter */}
           <div className="sendButton-container">
             <Button

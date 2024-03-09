@@ -30,7 +30,7 @@ export default function TabContainer() {
             style={{ alignItems: "center", display: "inline-flex", gap: "3px" }}
           >
             <img alt="Icon" src={send} width={24} height={24} />
-            Receive
+            Send
           </div>
         </label>
         <input
