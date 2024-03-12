@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import "./TabContainer.css";
 import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
 import SendTab from "../tabs/SendTab/SendTab";

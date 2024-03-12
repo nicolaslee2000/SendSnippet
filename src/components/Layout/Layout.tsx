@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import icon from "../../assets/icons/github.png";
 import "./Layout.css";
 import MainBox from "../MainBox/MainBox";

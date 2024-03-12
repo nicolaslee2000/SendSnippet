@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import "./ReceiveTab.css";
 import { CSSTransition } from "react-transition-group";
 import Button from "../../buttons/Button";
@@ -6,21 +6,21 @@ import downloadIcon from "../../../assets/icons/downloadIcon24.png";
 import AlertCopied from "../../AlertCopied/AlertCopied";
 import PincodeInput from "../../PincodeInput/PincodeInput";
 
-export default function ReceiveTab(props) {
+export default function ReceiveTab(props: any) {
   const DIGIT = 4;
   const status = props.status;
   const setStatus = props.setStatus;
-  const [digitKey, setDigitKey] = useState(Array(DIGIT).fill());
+  const [digitKey, setDigitKey] = useState(Array(DIGIT).fill(""));
   const [copied, setCopied] = useState(false);
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   const refAlert = useRef(null);
-  const handleDownload = async (e) => {
+  const handleDownload = async (e: any) => {
     setStatus("pending");
     resetStates();
     setCopied(true);
   };
-  const handleOk = (e) => {
+  const handleOk = (e: any) => {
     setStatus("idle");
     resetStates();
   };

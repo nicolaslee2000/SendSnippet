@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import "./PincodeInput.css";
 import { CSSTransition } from "react-transition-group";
 
-export default function PincodeInput(props) {
+export default function PincodeInput(props: any) {
   const digitKey = props.digitKey;
   const setDigitKey = props.setDigitKey;
   // refs for controlling focus on input
@@ -10,7 +10,7 @@ export default function PincodeInput(props) {
   //for shake animation when entered with wrong/incomplete key
   const [shake, setShake] = useState(false);
   const containerRef = useRef(null);
-  const handleChange = (e, i) => {
+  const handleChange = (e: any, i: any) => {
     const changedKey = digitKey;
     changedKey[i] = e.target.value;
     setDigitKey(changedKey);
@@ -19,7 +19,7 @@ export default function PincodeInput(props) {
     console.log(digitKey);
     console.log(props.digitKey);
   };
-  const handlePaste = (e) => {
+  const handlePaste = (e: any) => {
     e.preventDefault();
     const clipboardText = e.clipboardData.getData("text");
     if (/^\d{4}$/.test(clipboardText)) {
@@ -35,13 +35,13 @@ export default function PincodeInput(props) {
       nodeRef={containerRef}
     >
       <div id="pincode-container" ref={containerRef}>
-        {digitKey.map((digit, i) => {
+        {digitKey.map((digit: any, i: any) => {
           return (
             <input
               key={i}
               className="pinbox"
               placeholder="_"
-              maxLength="1"
+              maxLength={1}
               autoComplete="no"
               autoFocus={i === 0}
               value={digit}

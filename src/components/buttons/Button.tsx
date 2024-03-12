@@ -1,6 +1,6 @@
-import React from "react";
+import * as React from "react";
 import "./Button.css";
-export default function Button(props) {
+export default function Button(props: any) {
   const color = props.color;
   const onClick = props.onClick;
   const text = props.text;
