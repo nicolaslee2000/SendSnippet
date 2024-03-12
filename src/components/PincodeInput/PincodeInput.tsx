@@ -52,6 +52,9 @@ export default function PincodeInput(props: any) {
         next.focus();
       }
     }
+    if (e.key === "Enter") {
+      props.handleDownload(e);
+    }
   };
   return (
     <CSSTransition
