@@ -11,19 +11,49 @@ export default function PincodeInput(props: any) {
   const [shake, setShake] = useState(false);
   const containerRef = useRef(null);
   const handleChange = (e: any, i: any) => {
-    const changedKey = digitKey;
-    changedKey[i] = e.target.value;
+    const changedKey = [...digitKey];
+    changedKey[i] = /^\d$/.test(e.target.value) ? e.target.value : "";
     setDigitKey(changedKey);
-    console.log(typeof digitKey);
-    console.log(typeof props.digitKey);
-    console.log(digitKey);
-    console.log(props.digitKey);
   };
   const handlePaste = (e: any) => {
     e.preventDefault();
     const clipboardText = e.clipboardData.getData("text");
     if (/^\d{4}$/.test(clipboardText)) {
       props.setDigitKey(clipboardText.split(""));
+    }
+  };
+  const handleOnFocus = (e: any) => {
+    e.target.select();
+  };
+  const handleKeyDown = (e: any) => {
+    const index = Number(e.target.attributes.index.value);
+    if (e.key === "ArrowRight" && index < props.DIGIT - 1) {
+      e.preventDefault();
+      pinboxRefs[index + 1].current.focus();
+    }
+    if (e.key === "ArrowLeft" && index > 0) {
+      e.preventDefault();
+      pinboxRefs[index - 1].current.focus();
+    }
+    if (e.key >= "0" && e.key <= "9" && index < props.DIGIT - 1) {
+      e.preventDefault();
+      if (
+        e.target.selectionStart !== e.target.selectionEnd ||
+        e.target.value === ""
+      ) {
+        //digit selected
+        e.target.value = e.key;
+        handleChange(e, index);
+        pinboxRefs[index + 1].current.focus();
+      } else {
+        //digit not selected
+        pinboxRefs[index + 1].current.focus();
+        pinboxRefs[index + 1].current.value = e.key;
+        //manual handleChange
+        const changedKey = [...digitKey];
+        changedKey[index + 1] = /^\d$/.test(e.key) ? e.key : "";
+        setDigitKey(changedKey);
+      }
     }
   };
   return (
@@ -47,9 +77,10 @@ export default function PincodeInput(props: any) {
               value={digit}
               onChange={(e) => handleChange(e, i)}
               ref={pinboxRefs[i]}
-              // onKeyDown={() => {}}
-              onFocus={() => {}}
+              onKeyDown={handleKeyDown}
+              onFocus={handleOnFocus}
               onPaste={handlePaste}
+              index={i}
             />
           );
         })}

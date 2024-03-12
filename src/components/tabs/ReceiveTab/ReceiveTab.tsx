@@ -25,7 +25,7 @@ export default function ReceiveTab(props: any) {
     resetStates();
   };
   const resetStates = () => {
-    setDigitKey(Array(DIGIT).fill("_"));
+    setDigitKey(Array(DIGIT).fill(""));
     setCopied(false);
   };
   return (
