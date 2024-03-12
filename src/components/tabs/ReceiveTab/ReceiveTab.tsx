@@ -26,7 +26,6 @@ export default function ReceiveTab(props: any) {
     }
     setStatus("pending");
     resetStates();
-    setCopied(true);
   };
   const handleOk = (e: any) => {
     setStatus("idle");
@@ -37,6 +36,7 @@ export default function ReceiveTab(props: any) {
     setCopied(false);
   };
   const copy = () => {
+    setCopied(true);
     navigator.clipboard.writeText(text);
   };
   return (
@@ -99,6 +99,9 @@ export default function ReceiveTab(props: any) {
             ></textarea>
             <CopyButton copyText={copy} />
           </div>
+          <a href="https://www.google.com" rel="noreferrer" target="_blank">
+            Open Link
+          </a>
           {/* TODO: open link option */}
           <div className="cancelButton-container">
             <Button

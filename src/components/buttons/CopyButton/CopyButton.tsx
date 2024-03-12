@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useState } from "react";
 import "./CopyButton.css";
 import Clippy from "./Clippy";
 import Check from "./Check";
@@ -8,15 +8,12 @@ export interface CopyButtonProps {
 }
 const CopyButton = ({ copyText }: CopyButtonProps) => {
   const [copied, setCopied] = useState(false);
-  useEffect(() => {
-    console.log(copied);
-  }, [copied]);
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     copyText();
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
-    }, 1000);
+    }, 2000);
   };
   return (
     <button onClick={handleClick} id="copyButton">

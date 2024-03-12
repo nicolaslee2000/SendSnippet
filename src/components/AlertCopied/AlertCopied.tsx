@@ -7,7 +7,7 @@ export interface AlertCopiedProps {
 }
 
 export default function AlertCopied({ setCopied }: AlertCopiedProps) {
-  const ALERT_DURATION = 2500;
+  const ALERT_DURATION = 2000;
   useEffect(() => {
     let timer = setTimeout(() => setCopied(false), ALERT_DURATION);
     return () => {

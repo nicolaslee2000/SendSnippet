@@ -55,6 +55,12 @@ export default function PincodeInput(props: any) {
     if (e.key === "Enter") {
       props.handleDownload(e);
     }
+    if (e.key === "Backspace" && prev !== null) {
+      e.preventDefault();
+      e.target.value = "";
+      handleChange(e.target, id);
+      prev.focus();
+    }
   };
   return (
     <CSSTransition
