@@ -12,10 +12,16 @@ export default function ReceiveTab(props: any) {
   const setStatus = props.setStatus;
   const [digitKey, setDigitKey] = useState(Array(DIGIT).fill(""));
   const [copied, setCopied] = useState(false);
+  //for shake animation when entered with wrong/incomplete key
+  const [shake, setShake] = useState(false);
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   const refAlert = useRef(null);
   const handleDownload = async (e: any) => {
+    if (!/^\d{4}$/.test(digitKey.join(""))) {
+      setShake(true);
+      return;
+    }
     setStatus("pending");
     resetStates();
     setCopied(true);
@@ -54,6 +60,8 @@ export default function ReceiveTab(props: any) {
               digitKey={digitKey}
               setDigitKey={setDigitKey}
               DIGIT={DIGIT}
+              shake={shake}
+              setShake={setShake}
             />
           </div>
           {/* TODO: download on enter */}
@@ -75,7 +83,16 @@ export default function ReceiveTab(props: any) {
         nodeRef={ref2}
       >
         <div ref={ref2}>
-          <div className="key-container"></div>
+          <div className="key-container">
+            <textarea
+              autoFocus
+              value="aaskdjfh"
+              onChange={() => {}}
+              className={`sendTab-textarea`}
+              readOnly
+              onFocus={(e) => e.target.select()}
+            ></textarea>
+          </div>
           {/* TODO: open link option */}
           <div className="cancelButton-container">
             <Button

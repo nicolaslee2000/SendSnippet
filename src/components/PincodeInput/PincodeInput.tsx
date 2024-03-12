@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import "./PincodeInput.css";
 import { CSSTransition } from "react-transition-group";
 
@@ -6,8 +6,7 @@ export default function PincodeInput(props: any) {
   const digitKey = props.digitKey;
   const setDigitKey = props.setDigitKey;
   // refs for controlling focus on input
-  //for shake animation when entered with wrong/incomplete key
-  const [shake, setShake] = useState(false);
+
   const containerRef = useRef(null);
   const handleChange = (target: any, i: any) => {
     const changedKey = [...digitKey];
@@ -56,8 +55,8 @@ export default function PincodeInput(props: any) {
   };
   return (
     <CSSTransition
-      in={shake}
-      onEntered={() => setShake(false)}
+      in={props.shake}
+      onEntered={() => props.setShake(false)}
       timeout={300}
       className="pincode-transition-container"
       nodeRef={containerRef}

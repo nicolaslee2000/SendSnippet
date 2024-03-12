@@ -4,7 +4,7 @@ import Button from "../../buttons/Button";
 import { CSSTransition } from "react-transition-group";
 import QRCode from "react-qr-code";
 
-export default function SendTab(props) {
+export default function SendTab(props: any) {
   //temp start
   const code = 5395;
   const qrlink = "https://sendsnippet.web.app/";
@@ -24,19 +24,21 @@ export default function SendTab(props) {
       setStatus("idle");
     }
     const timer =
-      status === "pending" &&
-      counter > 0 &&
-      setInterval(() => setCounter(counter - 1), 1000);
+      status === "pending"
+        ? counter > 0
+          ? setInterval(() => setCounter(counter - 1), 1000)
+          : undefined
+        : undefined;
     return () => clearInterval(timer);
   }, [counter, status, setStatus]);
-  const handleTtsChange = (e) => {
+  const handleTtsChange = (e: any) => {
     setTts(e.target.value);
   };
   const resetStates = () => {
     setNoTextWarning(false);
     setCounter(TIME_LIMIT);
   };
-  const handleFocus = async (e) => {
+  const handleFocus = async (e: any) => {
     let text = "";
     try {
       text = await navigator.clipboard.readText();
@@ -48,7 +50,7 @@ export default function SendTab(props) {
     }
     e.target.select();
   };
-  const handleSend = async (e) => {
+  const handleSend = async (e: any) => {
     if (!tts) {
       setNoTextWarning(true);
       return;
@@ -58,7 +60,7 @@ export default function SendTab(props) {
     await new Promise((res) => setTimeout(res, 1000));
     props.setStatus("pending");
   };
-  const handleCancel = async (e) => {
+  const handleCancel = async (e: any) => {
     resetStates();
     props.setStatus("idle");
   };
