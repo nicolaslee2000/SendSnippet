@@ -3,7 +3,7 @@ import "./TabContainer.css";
 import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
 import SendTab from "../tabs/SendTab/SendTab";
 import { CSSTransition } from "react-transition-group";
-import download from "../../assets/icons/download.png";
+import download from "../../assets/icons/receive.png";
 import send from "../../assets/icons/send.png";
 
 export default function TabContainer() {

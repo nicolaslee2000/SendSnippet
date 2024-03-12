@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import "./ReceiveTab.css";
 import { CSSTransition } from "react-transition-group";
 import Button from "../../buttons/Button";
-import downloadIcon from "../../../assets/icons/downloadIcon24.png";
+import downloadIcon from "../../../assets/icons/download.png";
 import AlertCopied from "../../AlertCopied/AlertCopied";
 import PincodeInput from "../../PincodeInput/PincodeInput";
 import CopyButton from "../../buttons/CopyButton/CopyButton";
@@ -24,6 +24,7 @@ export default function ReceiveTab(props: any) {
       setShake(true);
       return;
     }
+    setText("example");
     setStatus("pending");
     resetStates();
   };

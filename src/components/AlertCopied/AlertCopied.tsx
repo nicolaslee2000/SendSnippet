@@ -16,7 +16,7 @@ export default function AlertCopied({ setCopied }: AlertCopiedProps) {
   });
   return (
     <>
-      <img src={checkedIcon} alt="Icon" />
+      <img src={checkedIcon} alt="Icon" width={24} height={24} />
       Text Copied!
     </>
   );
