@@ -3,6 +3,8 @@ import "./SendTab.css";
 import Button from "../../buttons/Button";
 import { CSSTransition } from "react-transition-group";
 import QRCode from "react-qr-code";
+import writeDB, { download } from "../../../firebase";
+import uploadFile from "../../../firebase";
 
 export default function SendTab(props: any) {
   //temp start
@@ -57,12 +59,28 @@ export default function SendTab(props: any) {
     }
     resetStates();
     props.setStatus("loading");
+    const file = new File(["foojjj"], "foo.txt", {
+      type: "text/plain",
+    });
+
+    uploadFile("ahlol", file);
     await new Promise((res) => setTimeout(res, 1000));
     props.setStatus("pending");
   };
   const handleCancel = async (e: any) => {
     resetStates();
     props.setStatus("idle");
+  };
+  const handleDownload = async () => {
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = "blob";
+    xhr.onload = (event) => {
+      const blob = xhr.response;
+      console.log(blob);
+    };
+    const url = await download();
+    xhr.open("GET", url);
+    xhr.send();
   };
   return (
     <div className="tab-content">
