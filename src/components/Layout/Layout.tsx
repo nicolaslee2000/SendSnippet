@@ -12,7 +12,7 @@ export default function Layout() {
           target="_blank"
           rel="noreferrer"
         >
-          <img src={icon} alt="Icon" />
+          <img src={icon} alt="Icon" width={30} height={30} />
         </a>
       </div>
     </div>
