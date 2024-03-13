@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, logEvent, setUserId } from "firebase/analytics";
 import { getFirestore, setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { document } from "./types/document";
 const firebaseConfig = {
@@ -40,3 +40,10 @@ export const uploadText = async (text: string) => {
 };
 
 export const downloadText = async (key: string) => {};
+
+export const logUser = () => {
+  console.log("eee");
+  setUserId(analytics, "12345");
+  logEvent(analytics, "goal_completion", { name: "lever_puzzle" });
+  logEvent(analytics, "user details");
+};

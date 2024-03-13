@@ -1,6 +1,6 @@
 import "./App.css";
 import Layout from "./components/Layout/Layout";
-import { uploadText } from "./firebase";
+import { logUser } from "./firebase";
 
 function App() {
   return (
@@ -9,7 +9,8 @@ function App() {
       <div>
         <button
           onClick={() => {
-            uploadText("ff");
+            // uploadText("ff");
+            logUser();
           }}
         >
           test
