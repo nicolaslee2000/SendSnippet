@@ -5,6 +5,15 @@ function App() {
   return (
     <div className="App">
       <Layout />
+      <div>
+        <button
+          onClick={() => {
+            console.log(new Date());
+          }}
+        >
+          test
+        </button>
+      </div>
     </div>
   );
 }

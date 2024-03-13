@@ -57,6 +57,11 @@ export default function SendTab(props: any) {
     }
     resetStates();
     props.setStatus("loading");
+    const file = new File(["foojjj"], "foo.txt", {
+      type: "text/plain",
+    });
+
+    // uploadFile("ahlol", file);
     await new Promise((res) => setTimeout(res, 1000));
     props.setStatus("pending");
   };
@@ -64,6 +69,7 @@ export default function SendTab(props: any) {
     resetStates();
     props.setStatus("idle");
   };
+
   return (
     <div className="tab-content">
       <CSSTransition
