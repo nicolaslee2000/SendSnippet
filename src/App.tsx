@@ -1,5 +1,6 @@
 import "./App.css";
 import Layout from "./components/Layout/Layout";
+import { uploadText } from "./firebase";
 
 function App() {
   return (
@@ -8,7 +9,7 @@ function App() {
       <div>
         <button
           onClick={() => {
-            console.log(new Date());
+            uploadText("helppp");
           }}
         >
           test

@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, setDoc, doc } from "firebase/firestore";
+import { getFirestore, setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { document } from "./types/document";
 import {
   EXPIRY_TIME_MINUTES,
@@ -24,13 +24,13 @@ const analytics = getAnalytics(app);
 
 const firestore = getFirestore();
 
-const uploadText = async (text: string) => {
+export const uploadText = async (text: string) => {
   const tempKey = "1222";
   const document = doc(firestore, FIRESTORE_ROOTCOLLECTION_URL, tempKey);
   const data: document = {
     data: text,
     data_type: "text",
-    expiry: new Date(new Date().getTime() + EXPIRY_TIME_MINUTES * 60000),
+    created: serverTimestamp(),
   };
   await setDoc(document, data);
 };
