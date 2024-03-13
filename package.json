@@ -22,11 +22,12 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "7.21.11",
-    "@types/react-transition-group": "^4.4.10"
+    "@types/react-transition-group": "^4.4.10",
+    "env-cmd": "^10.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "env-cmd -f .env react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
