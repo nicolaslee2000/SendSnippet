@@ -10,7 +10,8 @@ import {
 
 initializeApp();
 const firestore = getFirestore();
-const expiryTimeDelay = 600;
+const EXPIRY_TIME_DELAY = 600;
+
 export const onCreatePost = onDocumentCreated(
   `data/{docId}`,
   (
@@ -20,7 +21,7 @@ export const onCreatePost = onDocumentCreated(
     >
   ) => {
     const data = event.data!.data();
-    const expiry = new Timestamp(data.created.seconds + expiryTimeDelay, 0);
+    const expiry = new Timestamp(data.created.seconds + EXPIRY_TIME_DELAY, 0);
     return event.data!.ref.set({ expiry: expiry }, { merge: true });
   }
 );
