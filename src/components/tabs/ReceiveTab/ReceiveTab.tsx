@@ -5,23 +5,28 @@ import Button from "../../buttons/Button";
 import downloadIcon from "../../../assets/icons/downloadIcon24.png";
 import AlertCopied from "../../AlertCopied/AlertCopied";
 import PincodeInput from "../../PincodeInput/PincodeInput";
+import { readText } from "../../../firebase/firebase";
 
 export default function ReceiveTab(props: any) {
   const DIGIT = 4;
   const status = props.status;
   const setStatus = props.setStatus;
-  const [digitKey, setDigitKey] = useState(Array(DIGIT).fill(""));
+  const [digitKey, setDigitKey] = useState<string[]>(Array(DIGIT).fill(""));
   const [copied, setCopied] = useState(false);
+  const [receivedText, setReceivedText] = useState("");
   //for shake animation when entered with wrong/incomplete key
   const [shake, setShake] = useState(false);
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   const refAlert = useRef(null);
   const handleDownload = async (e: any) => {
-    if (!/^\d{4}$/.test(digitKey.join(""))) {
+    const returnedText = await readText(digitKey.join(""));
+    console.log(returnedText);
+    if (!/^\d{4}$/.test(digitKey.join("")) || returnedText === "") {
       setShake(true);
       return;
     }
+    setReceivedText(returnedText);
     setStatus("pending");
     resetStates();
     setCopied(true);
@@ -86,7 +91,7 @@ export default function ReceiveTab(props: any) {
           <div className="key-container">
             <textarea
               autoFocus
-              value="aaskdjfh"
+              value={receivedText}
               onChange={() => {}}
               className={`sendTab-textarea`}
               readOnly
