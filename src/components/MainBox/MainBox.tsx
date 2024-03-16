@@ -1,4 +1,3 @@
-import * as React from "react";
 import "./MainBox.css";
 import TabContainer from "../TabContainer/TabContainer";
 export default function MainBox() {
