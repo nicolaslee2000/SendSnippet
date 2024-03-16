@@ -7,7 +7,7 @@ export interface AlertCopiedProps {
 }
 
 export default function AlertCopied({ setCopied }: AlertCopiedProps) {
-  const ALERT_DURATION = 2500;
+  const ALERT_DURATION = 2000;
   useEffect(() => {
     let timer = setTimeout(() => setCopied(false), ALERT_DURATION);
     return () => {
@@ -16,7 +16,7 @@ export default function AlertCopied({ setCopied }: AlertCopiedProps) {
   });
   return (
     <>
-      <img src={checkedIcon} alt="Icon" />
+      <img src={checkedIcon} alt="Icon" width={24} height={24} />
       Text Copied!
     </>
   );
