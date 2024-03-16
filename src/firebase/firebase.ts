@@ -1,9 +1,6 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
-
 import {
   getFirestore,
   setDoc,
@@ -29,24 +26,23 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_MEASUREMENTID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-export const firestore = getFirestore();
+const firestore = getFirestore();
 // DEVELOPMENT
 const functions = getFunctions(app);
 connectFirestoreEmulator(firestore, "127.0.0.1", 5002);
 connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-// DEVELOPMENT
-
 const keyspace = Array.from({ length: 10000 }, (_, i) => i).map((num) =>
   num.toString().padStart(4, "0")
 );
 export const uploadKeys = async () => {
   await setDoc(doc(firestore, "keyspace/keys"), { array: keyspace });
 };
+// DEVELOPMENT
 
+//re
 export const uploadText = async (text: string) => {
   try {
     return await runTransaction(
@@ -54,10 +50,10 @@ export const uploadText = async (text: string) => {
       async (transaction): Promise<string> => {
         const docRef = doc(firestore, "keyspace", "keys");
         const keys = await transaction.get(docRef);
-        const array: string[] = await keys.get("array");
-        if (array.length === 0) {
-          throw new Error("keys document does not exist.");
+        if (!keys.exists() || keys.get("array").length === 0) {
+          throw new Error("keys document error.");
         }
+        const array: string[] = await keys.get("array");
         const randomIndex = Math.floor(Math.random() * array.length);
         const generatedDigitKey = array[randomIndex];
         transaction.update(docRef, {

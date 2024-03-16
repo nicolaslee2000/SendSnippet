@@ -1,12 +1,13 @@
 import "./App.css";
 import Layout from "./components/Layout/Layout";
-import { uploadKeys, uploadText } from "./firebase/firebase";
+import { uploadKeys } from "./firebase/firebase";
 
 function App() {
   return (
     <div className="App">
       <Layout />
       <div>
+        {/* DEVELOPMENT */}
         <button
           onClick={async () => {
             uploadKeys();
