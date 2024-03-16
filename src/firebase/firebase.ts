@@ -14,6 +14,7 @@ import {
   runTransaction,
   arrayRemove,
   deleteDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { document } from "../types/document";
 
@@ -98,4 +99,21 @@ export const readText = async (key: string) => {
   } catch (e) {
     console.error(e);
   }
+};
+
+export const unsubscribeDeleteEventListener = (
+  key: string,
+  onDelete: () => void
+) => {
+  return onSnapshot(
+    doc(firestore, "data", key),
+    (doc) => {
+      if (!doc.exists()) {
+        onDelete();
+      }
+    },
+    (err): void => {
+      console.error(err);
+    }
+  );
 };

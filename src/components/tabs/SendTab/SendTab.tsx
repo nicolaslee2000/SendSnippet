@@ -3,7 +3,10 @@ import "./SendTab.css";
 import Button from "../../buttons/Button";
 import { CSSTransition } from "react-transition-group";
 import QRCode from "react-qr-code";
-import { uploadText } from "../../../firebase/firebase";
+import {
+  unsubscribeDeleteEventListener,
+  uploadText,
+} from "../../../firebase/firebase";
 
 export default function SendTab(props: any) {
   //temp start
@@ -58,6 +61,9 @@ export default function SendTab(props: any) {
     }
     try {
       const receivedKey = await uploadText(tts);
+      const unsub = unsubscribeDeleteEventListener(receivedKey!, () => {
+        console.log("deleted");
+      });
       setCode(receivedKey);
     } catch (e) {
       console.log(e);
