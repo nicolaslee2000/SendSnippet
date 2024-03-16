@@ -13,6 +13,7 @@ import {
   getDoc,
   runTransaction,
   arrayRemove,
+  deleteDoc,
 } from "firebase/firestore";
 import { document } from "../types/document";
 
@@ -34,55 +35,67 @@ const analytics = getAnalytics(app);
 export const firestore = getFirestore();
 // DEVELOPMENT
 const functions = getFunctions(app);
-// connectFirestoreEmulator(firestore, "127.0.0.1", 5002);
-// connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+connectFirestoreEmulator(firestore, "127.0.0.1", 5002);
+connectFunctionsEmulator(functions, "127.0.0.1", 5001);
 // DEVELOPMENT
 
-// const keyspace = Array.from({ length: 10000 }, (_, i) => i).map((num) =>
-//   num.toString().padStart(4, "0")
-// );
-// export const uploadKeys = async () => {
-//   await setDoc(doc(firestore, "keyspace/keys"), { array: keyspace });
-// };
+const keyspace = Array.from({ length: 15 }, (_, i) => i).map((num) =>
+  num.toString().padStart(4, "0")
+);
+export const uploadKeys = async () => {
+  await setDoc(doc(firestore, "keyspace/keys"), { array: keyspace });
+};
 
 export const uploadText = async (text: string) => {
   try {
-    let generatedDigitKey: string;
-    await runTransaction(firestore, async (transaction) => {
-      const docRef = doc(firestore, "keyspace", "keys");
-      const keys = await transaction.get(docRef);
-      const array: string[] = await keys.get("array");
-      if (array.length === 0) {
-        throw new Error("keys document does not exist.");
+    return await runTransaction(
+      firestore,
+      async (transaction): Promise<string> => {
+        const docRef = doc(firestore, "keyspace", "keys");
+        const keys = await transaction.get(docRef);
+        const array: string[] = await keys.get("array");
+        if (array.length === 0) {
+          throw new Error("keys document does not exist.");
+        }
+        const randomIndex = Math.floor(Math.random() * array.length);
+        const generatedDigitKey = array[randomIndex];
+        transaction.update(docRef, {
+          array: arrayRemove(generatedDigitKey),
+        });
+        const docToUploadRef = doc(firestore, "data", generatedDigitKey);
+        const data: document = {
+          data: text,
+          data_type: "text",
+          created: serverTimestamp(),
+        };
+        transaction.set(docToUploadRef, data);
+        return generatedDigitKey;
       }
-      const randomIndex = Math.floor(Math.random() * array.length);
-      generatedDigitKey = array[randomIndex];
-      transaction.update(docRef, {
-        array: arrayRemove(generatedDigitKey),
-      });
-      const docToUploadRef = doc(firestore, "data", generatedDigitKey);
-      const data: document = {
-        data: text,
-        data_type: "text",
-        created: serverTimestamp(),
-      };
-      transaction.set(docToUploadRef, data);
-    });
-    return generatedDigitKey!;
+    );
   } catch (e) {
     console.error(e);
   }
 };
 
 export const readText = async (key: string) => {
-  const docRef = doc(
-    firestore,
-    process.env.REACT_APP_FIRESTORE_DEFAULTCOLLECTION_URL!,
-    key
-  );
-  const docSnap = await getDoc(docRef);
-  if (!docSnap.exists()) {
-    return null;
+  try {
+    return await runTransaction(
+      firestore,
+      async (transaction): Promise<string> => {
+        const docRef = doc(
+          firestore,
+          process.env.REACT_APP_FIRESTORE_DEFAULTCOLLECTION_URL!,
+          key
+        );
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+          throw new Error("no Document exists");
+        }
+        deleteDoc(docRef);
+        return docSnap.data().data;
+      }
+    );
+  } catch (e) {
+    console.error(e);
   }
-  return docSnap.data().data;
 };

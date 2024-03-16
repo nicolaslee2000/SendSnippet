@@ -13,7 +13,7 @@ export default function ReceiveTab(props: any) {
   const setStatus = props.setStatus;
   const [digitKey, setDigitKey] = useState<string[]>(Array(DIGIT).fill(""));
   const [copied, setCopied] = useState(false);
-  const [receivedText, setReceivedText] = useState("");
+  const [receivedText, setReceivedText] = useState<string>();
   //for shake animation when entered with wrong/incomplete key
   const [shake, setShake] = useState(false);
   const ref1 = useRef(null);

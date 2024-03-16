@@ -10,7 +10,7 @@ import {
 
 initializeApp();
 const firestore = getFirestore();
-const expiryTimeDelay = 60;
+const expiryTimeDelay = 600;
 export const onCreatePost = onDocumentCreated(
   `data/{docId}`,
   (
@@ -21,10 +21,6 @@ export const onCreatePost = onDocumentCreated(
   ) => {
     const data = event.data!.data();
     const expiry = new Timestamp(data.created.seconds + expiryTimeDelay, 0);
-    console.log(data.created.seconds);
-    console.log(expiryTimeDelay);
-    console.log(expiry);
-
     return event.data!.ref.set({ expiry: expiry }, { merge: true });
   }
 );
@@ -37,10 +33,8 @@ export const returnKeyOnDelete = onDocumentDeleted(
       ParamsOf<"data/{docId}">
     >
   ) => {
-    console.log(event.params.docId);
     firestore.doc("keyspace/keys").update({
-      array: FieldValue.arrayRemove(event.params.docId),
+      array: FieldValue.arrayUnion(event.params.docId),
     });
-    console.log(firestore.doc("keyspace/keys"));
   }
 );

@@ -1,6 +1,6 @@
 import "./App.css";
 import Layout from "./components/Layout/Layout";
-import { uploadText } from "./firebase/firebase";
+import { uploadKeys, uploadText } from "./firebase/firebase";
 
 function App() {
   return (
@@ -9,8 +9,7 @@ function App() {
       <div>
         <button
           onClick={async () => {
-            const a = await uploadText("asdf");
-            console.log(a);
+            uploadKeys();
           }}
         >
           test
