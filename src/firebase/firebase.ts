@@ -7,10 +7,8 @@ import {
   doc,
   serverTimestamp,
   connectFirestoreEmulator,
-  getDoc,
   runTransaction,
   arrayRemove,
-  deleteDoc,
   onSnapshot,
 } from "firebase/firestore";
 import { document } from "../types/document";
@@ -42,7 +40,15 @@ export const uploadKeys = async () => {
 };
 // DEVELOPMENT
 
-//re
+/**
+ * call to uploadText to database. Uses transaction for atomic upload operation
+ * 1. get "keys" document from keyspace collection representing available 4 digit keys
+ * 2. generate random index to get random key from available keyspace
+ * 3. remove selected key from keyspace
+ * 4. upload text document with id = key
+ * @param text to upload
+ * @returns promise of generated 4 digit key
+ */
 export const uploadText = async (text: string) => {
   try {
     return await runTransaction(
@@ -74,6 +80,14 @@ export const uploadText = async (text: string) => {
   }
 };
 
+/**
+ * Get text data from database given unique 4 digit key using transaction.
+ * 1. get document by digit key
+ * 2. delete document from database
+ * (3.) this will trigger cloud function to automatically add removed digit key back to available keyspace
+ * @param key 4 digit string key
+ * @returns promise of text requested
+ */
 export const readText = async (key: string) => {
   try {
     return await runTransaction(
@@ -84,11 +98,11 @@ export const readText = async (key: string) => {
           process.env.REACT_APP_FIRESTORE_DEFAULTCOLLECTION_URL!,
           key
         );
-        const docSnap = await getDoc(docRef);
+        const docSnap = await transaction.get(docRef);
         if (!docSnap.exists()) {
           throw new Error("no Document exists");
         }
-        deleteDoc(docRef);
+        transaction.delete(docRef);
         return docSnap.data().data;
       }
     );
@@ -97,12 +111,18 @@ export const readText = async (key: string) => {
   }
 };
 
+/**
+ *
+ * @param key 4 digit string key to identify document to subscribe to
+ * @param onDelete callback function for when said document is deleted. Returns void.
+ * @returns void
+ */
 export const unsubscribeDeleteEventListener = (
   key: string,
   onDelete: () => void
 ) => {
   return onSnapshot(
-    doc(firestore, "data", key),
+    doc(firestore, process.env.REACT_APP_FIRESTORE_DEFAULTCOLLECTION_URL!, key),
     (doc) => {
       if (!doc.exists()) {
         onDelete();
