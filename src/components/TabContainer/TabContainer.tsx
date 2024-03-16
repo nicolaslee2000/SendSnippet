@@ -5,13 +5,18 @@ import SendTab from "../tabs/SendTab/SendTab";
 import { CSSTransition } from "react-transition-group";
 import download from "../../assets/icons/download.png";
 import send from "../../assets/icons/send.png";
+import { Unsubscribe } from "firebase/firestore";
 
 export default function TabContainer() {
   //idle, pending, loading
   const [status, setStatus] = useState("idle");
   const [tab, setTab] = useState(1);
+  const [unsub, setUnsub] = useState<Unsubscribe>();
   const ref1 = useRef(null);
   const ref2 = useRef(null);
+  const setPlz = (func: Unsubscribe) => {
+    setUnsub(func);
+  };
   return (
     <div className="tabs-container">
       <div className="tabs">
@@ -66,7 +71,12 @@ export default function TabContainer() {
             nodeRef={ref1}
           >
             <div ref={ref1}>
-              <SendTab status={status} setStatus={setStatus} />
+              <SendTab
+                status={status}
+                setStatus={setStatus}
+                setUnsub={setUnsub}
+                unsub={unsub}
+              />
             </div>
           </CSSTransition>
           <CSSTransition
@@ -77,7 +87,12 @@ export default function TabContainer() {
             nodeRef={ref2}
           >
             <div ref={ref2}>
-              <ReceiveTab status={status} setStatus={setStatus} />
+              <ReceiveTab
+                status={status}
+                setStatus={setStatus}
+                unsub={unsub}
+                setUnsub={setUnsub}
+              />
             </div>
           </CSSTransition>
         </div>

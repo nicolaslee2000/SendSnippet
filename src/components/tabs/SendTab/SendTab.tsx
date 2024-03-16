@@ -21,6 +21,7 @@ export default function SendTab(props: any) {
   const setStatus = props.setStatus;
   const ref1 = useRef(null);
   const ref2 = useRef(null);
+  let unsub: any = undefined;
   useEffect(() => {
     if (counter <= 0) {
       setNoTextWarning(false);
@@ -35,6 +36,13 @@ export default function SendTab(props: any) {
         : undefined;
     return () => clearInterval(timer);
   }, [counter, status, setStatus]);
+  useEffect(() => {
+    return () => {
+      if (unsub !== undefined && unsub !== null) {
+        unsub();
+      }
+    };
+  }, [unsub]);
   const handleTtsChange = (e: any) => {
     setTts(e.target.value);
   };
@@ -55,15 +63,13 @@ export default function SendTab(props: any) {
     e.target.select();
   };
   const handleSend = async (e: any) => {
+    let receivedKey: any;
     if (!tts) {
       setNoTextWarning(true);
       return;
     }
     try {
-      const receivedKey = await uploadText(tts);
-      const unsub = unsubscribeDeleteEventListener(receivedKey!, () => {
-        console.log("deleted");
-      });
+      receivedKey = await uploadText(tts);
       setCode(receivedKey);
     } catch (e) {
       console.log(e);
@@ -71,9 +77,11 @@ export default function SendTab(props: any) {
     resetStates();
     props.setStatus("loading");
 
-    // uploadFile("ahlol", file);
     await new Promise((res) => setTimeout(res, 1000));
     props.setStatus("pending");
+    unsub = unsubscribeDeleteEventListener(receivedKey!, () => {
+      handleCancel("a");
+    });
   };
   const handleCancel = async (e: any) => {
     resetStates();

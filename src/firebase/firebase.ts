@@ -40,7 +40,7 @@ connectFirestoreEmulator(firestore, "127.0.0.1", 5002);
 connectFunctionsEmulator(functions, "127.0.0.1", 5001);
 // DEVELOPMENT
 
-const keyspace = Array.from({ length: 15 }, (_, i) => i).map((num) =>
+const keyspace = Array.from({ length: 10000 }, (_, i) => i).map((num) =>
   num.toString().padStart(4, "0")
 );
 export const uploadKeys = async () => {

@@ -21,11 +21,12 @@ export default function ReceiveTab(props: any) {
   const refAlert = useRef(null);
   const handleDownload = async (e: any) => {
     const returnedText = await readText(digitKey.join(""));
-    console.log(returnedText);
+    // props.unsub();
     if (!/^\d{4}$/.test(digitKey.join("")) || returnedText === null) {
       setShake(true);
       return;
     }
+    console.log(props.unsub);
     setReceivedText(returnedText);
     setStatus("pending");
     resetStates();

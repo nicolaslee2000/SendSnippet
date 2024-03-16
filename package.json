@@ -25,7 +25,7 @@
     "env-cmd": "^10.1.0"
   },
   "scripts": {
-    "start": "react-scripts start | npm run emulators",
+    "start": "react-scripts start",
     "start:local": "react-scripts start",
     "build": "env-cmd -f .env react-scripts build",
     "test": "react-scripts test",
