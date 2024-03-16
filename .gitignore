@@ -109,3 +109,8 @@ node_modules/
 
 # dotenv environment variables file
 .env
+# firebase api key
+sendsnippet-858fb80bb0ea.json
+# firestore config
+firestore.rules
+firestore.indexes.json

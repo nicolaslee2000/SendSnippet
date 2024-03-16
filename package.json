@@ -13,7 +13,6 @@
     "firebase": "^10.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-ga": "^3.3.1",
     "react-qr-code": "^2.0.12",
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.5",
@@ -26,10 +25,14 @@
     "env-cmd": "^10.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start | npm run emulators",
     "build": "env-cmd -f .env react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "npm run build && firebase deploy",
+    "emulators": "npm run build --prefix functions -- --watch | firebase emulators:start",
+    "deploy:functions": "npm run build && firebase deploy --only functions",
+    "deploy:hosting": "npm run build && firebase deploy --only hosting"
   },
   "eslintConfig": {
     "extends": [
