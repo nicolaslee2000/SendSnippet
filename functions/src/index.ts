@@ -10,9 +10,13 @@ import {
 
 initializeApp();
 const firestore = getFirestore();
+// Document TTL. Default: 10 minutes
 const EXPIRY_TIME_DELAY = 600;
 
-export const onCreatePost = onDocumentCreated(
+/**
+ * cloud function to add expiry field all documents created
+ */
+export const addExpiry = onDocumentCreated(
   `data/{docId}`,
   (
     event: FirestoreEvent<
@@ -26,7 +30,10 @@ export const onCreatePost = onDocumentCreated(
   }
 );
 
-export const returnKeyOnDelete = onDocumentDeleted(
+/**
+ * cloud function to add removed unique 4 digit key back to available key space on document deletion
+ */
+export const addKeyBackToKeyspaceOnDelete = onDocumentDeleted(
   `data/{docId}`,
   (
     event: FirestoreEvent<
