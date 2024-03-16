@@ -9,7 +9,8 @@ function App() {
       <div>
         <button
           onClick={async () => {
-            uploadText("asdf");
+            const a = await uploadText("asdf");
+            console.log(a);
           }}
         >
           test

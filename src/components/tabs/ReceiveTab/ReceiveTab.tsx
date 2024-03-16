@@ -22,7 +22,7 @@ export default function ReceiveTab(props: any) {
   const handleDownload = async (e: any) => {
     const returnedText = await readText(digitKey.join(""));
     console.log(returnedText);
-    if (!/^\d{4}$/.test(digitKey.join("")) || returnedText === "") {
+    if (!/^\d{4}$/.test(digitKey.join("")) || returnedText === null) {
       setShake(true);
       return;
     }

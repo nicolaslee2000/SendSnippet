@@ -1,18 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./SendTab.css";
 import Button from "../../buttons/Button";
 import { CSSTransition } from "react-transition-group";
 import QRCode from "react-qr-code";
+import { uploadText } from "../../../firebase/firebase";
 
 export default function SendTab(props: any) {
   //temp start
-  const code = 5395;
   const qrlink = "https://sendsnippet.web.app/";
   //temp end
   const TIME_LIMIT = 600;
   const [tts, setTts] = useState("");
   const [noTextWarning, setNoTextWarning] = useState(false);
   const [counter, setCounter] = useState(TIME_LIMIT);
+  const [code, setCode] = useState<string>();
   const status = props.status;
   const setStatus = props.setStatus;
   const ref1 = useRef(null);
@@ -54,6 +55,12 @@ export default function SendTab(props: any) {
     if (!tts) {
       setNoTextWarning(true);
       return;
+    }
+    try {
+      const receivedKey = await uploadText(tts);
+      setCode(receivedKey);
+    } catch (e) {
+      console.log(e);
     }
     resetStates();
     props.setStatus("loading");

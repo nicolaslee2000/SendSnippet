@@ -11,6 +11,8 @@ import {
   serverTimestamp,
   connectFirestoreEmulator,
   getDoc,
+  runTransaction,
+  arrayRemove,
 } from "firebase/firestore";
 import { document } from "../types/document";
 
@@ -44,21 +46,31 @@ const functions = getFunctions(app);
 // };
 
 export const uploadText = async (text: string) => {
-  const tempKey = "0000";
-  const docRef = doc(
-    firestore,
-    process.env.REACT_APP_FIRESTORE_DEFAULTCOLLECTION_URL!,
-    tempKey
-  );
-  const data: document = {
-    data: text,
-    data_type: "text",
-    created: serverTimestamp(),
-  };
   try {
-    await setDoc(docRef, data);
+    let generatedDigitKey: string;
+    await runTransaction(firestore, async (transaction) => {
+      const docRef = doc(firestore, "keyspace", "keys");
+      const keys = await transaction.get(docRef);
+      const array: string[] = await keys.get("array");
+      if (array.length === 0) {
+        throw new Error("keys document does not exist.");
+      }
+      const randomIndex = Math.floor(Math.random() * array.length);
+      generatedDigitKey = array[randomIndex];
+      transaction.update(docRef, {
+        array: arrayRemove(generatedDigitKey),
+      });
+      const docToUploadRef = doc(firestore, "data", generatedDigitKey);
+      const data: document = {
+        data: text,
+        data_type: "text",
+        created: serverTimestamp(),
+      };
+      transaction.set(docToUploadRef, data);
+    });
+    return generatedDigitKey!;
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 
@@ -70,7 +82,7 @@ export const readText = async (key: string) => {
   );
   const docSnap = await getDoc(docRef);
   if (!docSnap.exists()) {
-    return "";
+    return null;
   }
   return docSnap.data().data;
 };
