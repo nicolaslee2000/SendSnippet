@@ -3,7 +3,7 @@
   min-width: 500px;
   min-height: 400px;
   max-height: 600px;
-  height: 400px;
+  height: 600px;
   margin: 0;
   margin-bottom: 20px;
   padding: 0;
@@ -15,7 +15,7 @@
   position: absolute;
   left: -9999px;
 }
-.tab {
+/* .tab {
   display: inline-block;
   border: 0;
   outline: none;
@@ -38,8 +38,8 @@
 
 .tab:hover {
   opacity: 1;
-}
-input:checked + .tab {
+} */
+/* input:checked + .tab {
   background: #fff;
   margin-bottom: 0;
   padding-bottom: 5px;
@@ -48,7 +48,7 @@ input:checked + .tab {
   color: #2b82d9;
   opacity: 1;
   box-shadow: 0 0px;
-}
+} */
 .tabContent-container {
   background: #fff;
   margin: 0;

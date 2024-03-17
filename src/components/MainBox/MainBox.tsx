@@ -16,19 +16,30 @@ import TabContainer from "../TabContainer/TabContainer";
 
 // currently working tabs
 export type tabs = "sendTab" | "receiveTab";
+
+// global status state:
+// when idle, all events possible.
+// When loading, disable switching tabs, show spinner.
+// When pending, disable switching tabs
+export type status = "idle" | "loading" | "pending";
+
 export default function MainBox() {
   // currently selected Tab
   const [currentTab, setCurrentTab] = useState<tabs>("sendTab");
-  //idle, pending, loading
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState<status>("idle");
+
   const [tab, setTab] = useState(1);
   const [unsub, setUnsub] = useState<Unsubscribe>();
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   return (
     <div id="mainBox">
-      <TabContainer currentTab={currentTab} setCurrentTab={setCurrentTab} />
-      <div className="tabs">
+      <TabContainer
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+        status={status}
+      />
+      {/* <div className="tabs">
         <input
           type="radio"
           checked={tab === 1}
@@ -65,7 +76,7 @@ export default function MainBox() {
             Receive
           </div>
         </label>
-      </div>
+      </div> */}
       <div
         className="tabContent-container"
         style={tab === 1 ? { borderTopLeftRadius: 0 } : { borderRadius: "5px" }}

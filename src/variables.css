@@ -2,5 +2,9 @@
   --font-primary: "Lexend";
   --font-secondary: "Roboto";
   --color-background: #bdcbe5;
-  --typography-shadow: 0.04em 0.04em rgba(0, 0, 0, 0.1);
+  --typography-shadow: 3px 3px rgba(0, 0, 0, 0.1);
+  --container-shadow: 0 3px rgba(0, 0, 0, 0.2);
+  --typography-color-gray: #808080;
+  --typography-color-blue: #2b82d9;
+  --transition-duration-tabs: 0.3s;
 }

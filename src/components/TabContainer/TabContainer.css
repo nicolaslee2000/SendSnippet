@@ -3,11 +3,37 @@
   justify-content: center;
   align-items: center;
   gap: 0.5em;
+  border: 0;
+  outline: none;
+  padding: 0.8em 1em 0.8em 0.5em;
+  font-size: 1.3em;
+  margin-right: 0.5em;
+  margin-bottom: 0.3em;
+  border-radius: 5px;
+  background: white;
+  cursor: pointer;
+  box-shadow: var(--container-shadow);
+  color: var(--typography-color-gray);
+  opacity: 0.8;
+  transition-property: padding, margin, border-radius;
+  transition-duration: var(--transition-duration-tabs);
+  -o-transition-duration: var(--transition-duration-tabs);
+  -ms-transition-duration: var(--transition-duration-tabs);
+  -moz-transition-duration: var(--transition-duration-tabs);
+  -webkit-transition-duration: var(--transition-duration-tabs);
 }
-.tab > input {
-  position: absolute;
-  left: -9999px;
+.tab:hover {
+  opacity: 1;
+}
+.tab.selected {
+  opacity: 1;
+  color: var(--typography-color-blue);
+  box-shadow: none;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-bottom: 0;
+  padding-bottom: 1.1em;
 }
 .tabIcon {
-  max-width: 1.7em;
+  max-width: 1.5em;
 }
