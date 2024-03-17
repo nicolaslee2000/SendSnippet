@@ -10,3 +10,8 @@
   padding: 40px 0 20px;
   text-shadow: var(--typography-shadow);
 }
+#mainBox-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

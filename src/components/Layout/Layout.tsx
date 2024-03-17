@@ -17,7 +17,9 @@ export default function Layout() {
           Send <em>Snippet</em>
         </div>
       </div>
-      <MainBox />
+      <div id="mainBox-container">
+        <MainBox />
+      </div>
       <div id="footer">
         <a href={GITHUB_LINK} target="_blank" rel="noreferrer">
           <img
