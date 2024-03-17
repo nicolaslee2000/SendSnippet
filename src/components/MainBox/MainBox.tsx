@@ -28,10 +28,8 @@ export default function MainBox() {
   const [currentTab, setCurrentTab] = useState<tabs>("sendTab");
   const [status, setStatus] = useState<status>("idle");
 
-  const [tab, setTab] = useState(1);
-  const [unsub, setUnsub] = useState<Unsubscribe>();
-  const ref1 = useRef(null);
-  const ref2 = useRef(null);
+  const sendRef = useRef(null);
+  const receiveRef = useRef(null);
   return (
     <div id="mainBox">
       <TabContainer
@@ -39,52 +37,48 @@ export default function MainBox() {
         setCurrentTab={setCurrentTab}
         status={status}
       />
-      {/* <div className="tabs">
-        <input
-          type="radio"
-          checked={tab === 1}
-          id="tab1"
-          readOnly
-          disabled={status !== "idle"}
-          onClick={(e) => {
-            setTab(1);
-          }}
-        />
-        <label htmlFor="tab1" className="tab">
-          <div
-            style={{ alignItems: "center", display: "inline-flex", gap: "3px" }}
-          >
-            <img alt="Icon" src={send} width={24} height={24} />
-            Send
-          </div>
-        </label>
-        <input
-          type="radio"
-          id="tab2"
-          readOnly
-          checked={tab === 2}
-          disabled={status !== "idle"}
-          onClick={(e) => {
-            setTab(2);
-          }}
-        />
-        <label htmlFor="tab2" className="tab">
-          <div
-            style={{ alignItems: "center", display: "inline-flex", gap: "3px" }}
-          >
-            <img alt="Icon" src={download} width={24} height={24} />
-            Receive
-          </div>
-        </label>
-      </div> */}
       <div
+        id="content-container"
+        style={
+          currentTab === "sendTab"
+            ? { borderTopLeftRadius: 0 }
+            : { borderRadius: "5px" }
+        }
+      >
+        <CSSTransition
+          in={currentTab === "sendTab"}
+          timeout={300}
+          classNames="send-content-transition-container"
+          unmountOnExit
+          nodeRef={sendRef}
+        >
+          <div ref={sendRef} className="transition-container">
+            <SendTab status={status} setStatus={setStatus} />
+          </div>
+        </CSSTransition>
+        <CSSTransition
+          in={currentTab === "receiveTab"}
+          timeout={300}
+          classNames="receive-content-transition-container"
+          unmountOnExit
+          nodeRef={receiveRef}
+        >
+          <div ref={receiveRef} className="transition-container">
+            <SendTab status={status} setStatus={setStatus} />
+          </div>
+        </CSSTransition>
+      </div>
+      {/* <div
         className="tabContent-container"
-        style={tab === 1 ? { borderTopLeftRadius: 0 } : { borderRadius: "5px" }}
+        style={
+          currentTab === "sendTab"
+            ? { borderTopLeftRadius: 0 }
+            : { borderRadius: "5px" }
+        }
       >
         <div className="absolute-helper-container">
-          {/* TODO: UseRef */}
           <CSSTransition
-            in={tab === 1}
+            in={currentTab === "sendTab"}
             timeout={300}
             classNames="tab-content-transition-container"
             unmountOnExit
@@ -100,7 +94,7 @@ export default function MainBox() {
             </div>
           </CSSTransition>
           <CSSTransition
-            in={tab === 2}
+            in={currentTab === "receiveTab"}
             timeout={300}
             classNames="tab-content-transition-container"
             unmountOnExit
@@ -116,7 +110,7 @@ export default function MainBox() {
             </div>
           </CSSTransition>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

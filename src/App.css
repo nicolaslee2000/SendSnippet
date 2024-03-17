@@ -12,3 +12,17 @@ body {
   align-items: center;
   justify-content: center;
 }
+@media only screen and (min-width: 481px) {
+  body {
+    min-width: 450px;
+  }
+}
+
+/* React transition group */
+.transition-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  padding: 1rem 2rem 2rem;
+  box-sizing: border-box;
+}

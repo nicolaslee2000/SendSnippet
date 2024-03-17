@@ -11,6 +11,9 @@
   line-height: 0.95em;
   text-shadow: var(--typography-shadow);
 }
+
+#title {
+}
 #mainBox-container {
   display: flex;
   justify-content: center;
