@@ -1,14 +1,13 @@
-
-html,
-body {
-  background: #bdcbe5;
-  align-items: center;
-  justify-content: center;
-}
-.App {
+* {
   margin: 0;
   padding: 0;
+  font-family: var(--font-primary), var(--font-secondary), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-* {
-  font-family: "Lexend", sans-serif;
+html,
+body {
+  background: var(--color-background);
+  align-items: center;
+  justify-content: center;
 }

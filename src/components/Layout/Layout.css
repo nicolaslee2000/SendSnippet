@@ -2,3 +2,11 @@
   justify-content: center;
   display: flex;
 }
+#title {
+  font-family: "Dancing Script", sans-serif;
+  font-size: 80px;
+  text-align: center;
+  color: white;
+  padding: 40px 0 20px;
+  text-shadow: var(--typography-shadow);
+}
