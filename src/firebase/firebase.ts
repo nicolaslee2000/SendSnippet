@@ -10,8 +10,9 @@ import {
   runTransaction,
   arrayRemove,
   onSnapshot,
+  deleteDoc,
 } from "firebase/firestore";
-import { document } from "../types/document";
+import { Document } from "../types/Document";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
@@ -30,15 +31,15 @@ const analytics = getAnalytics(app);
 const firestore = getFirestore();
 // DEVELOPMENT
 const functions = getFunctions(app);
-connectFirestoreEmulator(firestore, "127.0.0.1", 5002);
-connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+// connectFirestoreEmulator(firestore, "127.0.0.1", 5002);
+// connectFunctionsEmulator(functions, "127.0.0.1", 5001);
 const keyspace = Array.from({ length: 10000 }, (_, i) => i).map((num) =>
   num.toString().padStart(4, "0")
 );
 export const uploadKeys = async () => {
   await setDoc(doc(firestore, "keyspace/keys"), { array: keyspace });
 };
-// DEVELOPMENT
+// DEVELOPMENT END
 
 /**
  * call to uploadText to database. Uses transaction for atomic upload operation
@@ -66,7 +67,7 @@ export const uploadText = async (text: string) => {
           array: arrayRemove(generatedDigitKey),
         });
         const docToUploadRef = doc(firestore, "data", generatedDigitKey);
-        const data: document = {
+        const data: Document = {
           data: text,
           data_type: "text",
           created: serverTimestamp(),
@@ -77,6 +78,7 @@ export const uploadText = async (text: string) => {
     );
   } catch (e) {
     console.error(e);
+    return;
   }
 };
 
@@ -108,6 +110,25 @@ export const readText = async (key: string) => {
     );
   } catch (e) {
     console.error(e);
+    return;
+  }
+};
+
+export const deleteDocument = async (key: string | undefined) => {
+  try {
+    if (key === undefined) {
+      throw new Error("key not defined");
+    }
+    deleteDoc(
+      doc(
+        firestore,
+        process.env.REACT_APP_FIRESTORE_DEFAULTCOLLECTION_URL!,
+        key
+      )
+    );
+  } catch (e) {
+    console.error(e);
+    return;
   }
 };
 

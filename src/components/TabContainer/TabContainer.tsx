@@ -3,13 +3,14 @@ import "./TabContainer.css";
 import { status, tabs } from "../MainBox/MainBox";
 import receiveIcon from "../../assets/icons/receiveIcon.png";
 import sendIcon from "../../assets/icons/sendIcon.png";
+import { SetState } from "../../types/SetState";
 /**
  *
  * Container for navigation tabs
  */
 export interface TabContainerProps {
   currentTab: tabs;
-  setCurrentTab: React.Dispatch<React.SetStateAction<tabs>>;
+  setCurrentTab: SetState<tabs>;
   status: status;
 }
 export default function TabContainer({

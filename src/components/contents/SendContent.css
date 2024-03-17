@@ -1,0 +1,35 @@
+#sendContent {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+/* react transition group animation classes */
+.idle-pending-transition-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+.idle-pending-transition-container.enter {
+  opacity: 0;
+  transform: scale(0.1, 0.1);
+}
+.idle-pending-transition-container.enter-active {
+  opacity: 1;
+  transform: scale(1, 1);
+  transition: all 300ms ease-in-out;
+}
+.idle-pending-transition-container.exit {
+  opacity: 1;
+  transform: scale(1, 1);
+}
+.idle-pending-transition-container.exit-active {
+  opacity: 0;
+  transform: scale(0.1, 0.1);
+  transition: all 300ms ease-in-out;
+}
+
+.noTextWarning {
+  font-size: 0.7em;
+  color: red;
+}

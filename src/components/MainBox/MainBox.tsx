@@ -1,17 +1,19 @@
 import { useRef, useState } from "react";
 import "./MainBox.css";
-import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
 import SendTab from "../tabs/SendTab/SendTab";
 import { CSSTransition } from "react-transition-group";
 import download from "../../assets/icons/receiveIcon.png";
 import send from "../../assets/icons/sendIcon.png";
 import { Unsubscribe } from "firebase/firestore";
 import TabContainer from "../TabContainer/TabContainer";
+import SendContent, { SendContentProps } from "../contents/SendContent";
+import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
 
 /**
  *
  * Container for box where main logic starts
  * Shared states are usually stored here and passed unto children
+ * contains TabContainer, Tab-content-container which stores sendContent and ReceiveContent
  */
 
 // currently working tabs
@@ -24,12 +26,25 @@ export type tabs = "sendTab" | "receiveTab";
 export type status = "idle" | "loading" | "pending";
 
 export default function MainBox() {
+  //React transition group helper refs
+  const sendRef = useRef(null);
+  const receiveRef = useRef(null);
+
   // currently selected Tab
   const [currentTab, setCurrentTab] = useState<tabs>("sendTab");
   const [status, setStatus] = useState<status>("idle");
+  // text to send
+  const [tts, setTts] = useState<string>("");
+  // received text
+  const [receivedText, setReceivedText] = useState<string>("");
 
-  const sendRef = useRef(null);
-  const receiveRef = useRef(null);
+  const sendContentProps: SendContentProps = {
+    tts,
+    setTts,
+    status,
+    setStatus,
+  };
+
   return (
     <div id="mainBox">
       <TabContainer
@@ -53,7 +68,7 @@ export default function MainBox() {
           nodeRef={sendRef}
         >
           <div ref={sendRef} className="transition-container">
-            <SendTab status={status} setStatus={setStatus} />
+            <SendContent {...sendContentProps} />
           </div>
         </CSSTransition>
         <CSSTransition
@@ -64,7 +79,7 @@ export default function MainBox() {
           nodeRef={receiveRef}
         >
           <div ref={receiveRef} className="transition-container">
-            <SendTab status={status} setStatus={setStatus} />
+            <ReceiveTab status={status} setStatus={setStatus} />
           </div>
         </CSSTransition>
       </div>
