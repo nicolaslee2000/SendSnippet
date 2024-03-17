@@ -9,6 +9,7 @@ import MainBox from "../MainBox/MainBox";
 export default function Layout() {
   const GITHUB_LINK = "https://github.com/nicolaslee2000/SendSnippet";
   const githubIconSize = 30;
+
   return (
     <div id="main-layout-container">
       <div id="header">
