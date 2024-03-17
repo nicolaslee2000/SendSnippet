@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import "./ReceiveTab.css";
 import { CSSTransition } from "react-transition-group";
 import Button from "../../buttons/Button";
-import downloadIcon from "../../../assets/icons/download.png";
+import downloadIcon from "../../../assets/icons/downloadIcon.png";
 import AlertCopied from "../../AlertCopied/AlertCopied";
 import PincodeInput from "../../PincodeInput/PincodeInput";
 import { readText } from "../../../firebase/firebase";

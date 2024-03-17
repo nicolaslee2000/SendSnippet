@@ -2,5 +2,5 @@
   --font-primary: "Lexend";
   --font-secondary: "Roboto";
   --color-background: #bdcbe5;
-  --typography-shadow: 3px 3px rgba(0, 0, 0, 0.1);
+  --typography-shadow: 0.04em 0.04em rgba(0, 0, 0, 0.1);
 }

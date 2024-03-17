@@ -4,14 +4,18 @@
 }
 #title {
   font-family: "Dancing Script", sans-serif;
-  font-size: 80px;
+  font-size: 5em;
   text-align: center;
   color: white;
-  padding: 40px 0 20px;
+  padding: 2rem 0 2rem;
+  line-height: 0.95em;
   text-shadow: var(--typography-shadow);
 }
 #mainBox-container {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+#githubIcon {
+  max-width: 2rem;
 }

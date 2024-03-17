@@ -1,0 +1,13 @@
+.tab {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+}
+.tab > input {
+  position: absolute;
+  left: -9999px;
+}
+.tabIcon {
+  max-width: 1.7em;
+}

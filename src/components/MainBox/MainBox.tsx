@@ -3,27 +3,31 @@ import "./MainBox.css";
 import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
 import SendTab from "../tabs/SendTab/SendTab";
 import { CSSTransition } from "react-transition-group";
-import download from "../../assets/icons/receive.png";
-import send from "../../assets/icons/send.png";
+import download from "../../assets/icons/receiveIcon.png";
+import send from "../../assets/icons/sendIcon.png";
 import { Unsubscribe } from "firebase/firestore";
+import TabContainer from "../TabContainer/TabContainer";
 
 /**
  *
  * Container for box where main logic starts
  * Shared states are usually stored here and passed unto children
  */
+
+// currently working tabs
+export type tabs = "sendTab" | "receiveTab";
 export default function MainBox() {
+  // currently selected Tab
+  const [currentTab, setCurrentTab] = useState<tabs>("sendTab");
   //idle, pending, loading
   const [status, setStatus] = useState("idle");
   const [tab, setTab] = useState(1);
   const [unsub, setUnsub] = useState<Unsubscribe>();
   const ref1 = useRef(null);
   const ref2 = useRef(null);
-  const setPlz = (func: Unsubscribe) => {
-    setUnsub(func);
-  };
   return (
-    <div className="tabs-container">
+    <div id="mainBox">
+      <TabContainer currentTab={currentTab} setCurrentTab={setCurrentTab} />
       <div className="tabs">
         <input
           type="radio"
