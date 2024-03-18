@@ -114,3 +114,4 @@ sendsnippet-858fb80bb0ea.json
 # firestore config
 firestore.rules
 firestore.indexes.json
+storage.rules

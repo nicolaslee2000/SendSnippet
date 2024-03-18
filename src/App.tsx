@@ -1,6 +1,7 @@
 import "./App.css";
 import "./variables.css";
 import Layout from "./components/Layout/Layout";
+import { downloadFiles, uploadKeys } from "./firebase/firebase";
 
 function App() {
   return (

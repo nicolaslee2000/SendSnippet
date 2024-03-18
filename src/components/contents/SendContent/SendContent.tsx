@@ -1,24 +1,27 @@
 import { FocusEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import { SetState } from "../../types/SetState";
+import { SetState } from "../../../types/SetState";
 import "./SendContent.css";
 import { CSSTransition } from "react-transition-group";
-import Button from "../buttons/Button";
+import Button from "../../buttons/Button";
 import QRCode from "react-qr-code";
 import {
   deleteDocument,
   unsubscribeDeleteEventListener,
+  uploadFiles,
   uploadText,
-} from "../../firebase/firebase";
+} from "../../../firebase/firebase";
 import { Unsubscribe } from "firebase/firestore";
 import {
   CONTENT_TRANSITION_CONTAINER_CLASSNAME,
   TIME_LIMIT_SECONDS,
-} from "../../constants/constants";
+} from "../../../constants/constants";
 
 export interface SendContentProps {
   tts: string;
   setTts: SetState<string>;
-  setAllowTabSwitch: SetState<boolean>;
+  setIsAllowTabSwitch: SetState<boolean>;
+  filesToSend: File[];
+  setFilesToSend: SetState<File[]>;
 }
 
 /**
@@ -31,7 +34,9 @@ export interface SendContentProps {
 export default function SendContent({
   tts,
   setTts,
-  setAllowTabSwitch,
+  setIsAllowTabSwitch,
+  filesToSend,
+  setFilesToSend,
 }: SendContentProps) {
   //DEVELOPMENT
   const qrlink = "https://sendsnippet.web.app/";
@@ -51,8 +56,8 @@ export default function SendContent({
   const [display, setDisplay] = useState<"toSend" | "sent">("toSend");
   // if window is sent or it is loading, disallow tab switch
   useEffect(() => {
-    setAllowTabSwitch(display !== "sent" && !isLoading);
-  }, [display, isLoading, setAllowTabSwitch]);
+    setIsAllowTabSwitch(display !== "sent" && !isLoading);
+  }, [display, isLoading, setIsAllowTabSwitch]);
 
   //Starts timeLimit countdown when status changes to pending. Fires document expired event when timeLimit reaches 0
   useEffect(() => {
@@ -99,6 +104,23 @@ export default function SendContent({
   const handleDocDeleted = () => {
     setDisplay("toSend");
   };
+  const handleFileSend = async (e: MouseEvent<HTMLButtonElement>) => {
+    try {
+      setIsLoading(true);
+      // get key after uploading document
+      if (!filesToSend) {
+        return;
+      }
+      const key = await uploadFiles(filesToSend);
+      setReceivedKey(key);
+    } catch (e) {
+      console.error(e);
+      setDisplay("toSend");
+      return;
+    }
+    setIsLoading(false);
+    setDisplay("sent");
+  };
   // send button clicked
   const handleSend = async (e: MouseEvent<HTMLButtonElement>) => {
     // validate that text exists
@@ -111,6 +133,7 @@ export default function SendContent({
       setIsLoading(true);
       // get key after uploading document
       const key = await uploadText(tts);
+
       setReceivedKey(key);
       unsub = unsubscribeDeleteEventListener(key!, handleDocDeleted);
     } catch (e) {
@@ -149,8 +172,26 @@ export default function SendContent({
             disabled={isLoading}
           ></textarea>
           <div id="noTextWarning" ref={noTextWarningRef}></div>
+          <div>
+            {filesToSend.map((e, i) => {
+              return <div key={i}>{e.name}</div>;
+            })}
+          </div>
+          <input
+            type="file"
+            multiple
+            onChange={(e) => {
+              if (e.target.files) {
+                setFilesToSend(Array.from(e.target.files));
+              }
+            }}
+          />
           <div id="sendButton-container">
-            <Button text="Send" onClick={handleSend} isLoading={isLoading} />
+            <Button
+              text="Send"
+              onClick={filesToSend.length > 0 ? handleFileSend : handleSend}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </CSSTransition>

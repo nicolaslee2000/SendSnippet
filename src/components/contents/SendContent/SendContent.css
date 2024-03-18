@@ -5,7 +5,7 @@
 }
 #toSend-textarea {
   width: 100%;
-  height: clamp(3em, 70%, 15em);
+  height: clamp(2em, 5em, 5em);
   margin-bottom: 1em;
 }
 #sendButton-container {

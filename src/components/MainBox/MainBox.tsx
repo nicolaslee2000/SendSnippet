@@ -2,8 +2,13 @@ import { useRef, useState } from "react";
 import "./MainBox.css";
 import { CSSTransition } from "react-transition-group";
 import TabContainer from "../TabContainer/TabContainer";
-import SendContent, { SendContentProps } from "../contents/SendContent";
+import SendContent, {
+  SendContentProps,
+} from "../contents/SendContent/SendContent";
 import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
+import ReceiveContent, {
+  ReceiveContentProps,
+} from "../contents/ReceiveContent/ReceiveContent";
 
 /**
  *
@@ -28,13 +33,27 @@ export default function MainBox() {
   const [isAllowTabSwitch, setIsAllowTabSwitch] = useState<boolean>(true);
   // text to send
   const [tts, setTts] = useState<string>("");
+  // files to send
+  const [filesToSend, setFilesToSend] = useState<File[]>([]);
   // received text
   const [receivedText, setReceivedText] = useState<string>("");
+  // received files
+  const [receivedFiles, setReceivedFiles] = useState<File[]>([]);
 
   const sendContentProps: SendContentProps = {
     tts,
     setTts,
-    setAllowTabSwitch: setIsAllowTabSwitch,
+    filesToSend,
+    setFilesToSend,
+    setIsAllowTabSwitch,
+  };
+
+  const receiveContentProps: ReceiveContentProps = {
+    receivedText,
+    setReceivedText,
+    receivedFiles,
+    setReceivedFiles,
+    setIsAllowTabSwitch,
   };
 
   return (
@@ -71,7 +90,7 @@ export default function MainBox() {
           nodeRef={receiveRef}
         >
           <div ref={receiveRef} className="transition-container">
-            <ReceiveTab />
+            <ReceiveContent {...receiveContentProps} />
           </div>
         </CSSTransition>
       </div>
