@@ -1,22 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./SendTab.css";
 import Button from "../../buttons/Button";
 import { CSSTransition } from "react-transition-group";
 import QRCode from "react-qr-code";
+import {
+  unsubscribeDeleteEventListener,
+  uploadText,
+} from "../../../firebase/firebase";
 
 export default function SendTab(props: any) {
   //temp start
-  const code = 5395;
   const qrlink = "https://sendsnippet.web.app/";
   //temp end
   const TIME_LIMIT = 600;
   const [tts, setTts] = useState("");
   const [noTextWarning, setNoTextWarning] = useState(false);
   const [counter, setCounter] = useState(TIME_LIMIT);
+  const [code, setCode] = useState<string>();
   const status = props.status;
   const setStatus = props.setStatus;
   const ref1 = useRef(null);
   const ref2 = useRef(null);
+  let unsub: any = undefined;
   useEffect(() => {
     if (counter <= 0) {
       setNoTextWarning(false);
@@ -31,6 +36,13 @@ export default function SendTab(props: any) {
         : undefined;
     return () => clearInterval(timer);
   }, [counter, status, setStatus]);
+  useEffect(() => {
+    return () => {
+      if (unsub !== undefined && unsub !== null) {
+        unsub();
+      }
+    };
+  }, [unsub]);
   const handleTtsChange = (e: any) => {
     setTts(e.target.value);
   };
@@ -51,16 +63,25 @@ export default function SendTab(props: any) {
     e.target.select();
   };
   const handleSend = async (e: any) => {
+    let receivedKey: any;
     if (!tts) {
       setNoTextWarning(true);
       return;
     }
+    try {
+      receivedKey = await uploadText(tts);
+      setCode(receivedKey);
+    } catch (e) {
+      console.log(e);
+    }
     resetStates();
     props.setStatus("loading");
 
-    // uploadFile("ahlol", file);
     await new Promise((res) => setTimeout(res, 1000));
     props.setStatus("pending");
+    unsub = unsubscribeDeleteEventListener(receivedKey!, () => {
+      handleCancel("a");
+    });
   };
   const handleCancel = async (e: any) => {
     resetStates();
@@ -100,7 +121,7 @@ export default function SendTab(props: any) {
             <Button
               text="Send"
               onClick={handleSend}
-              loading={props.status === "loading"}
+              isLoading={props.status === "loading"}
             />
           </div>
         </div>
@@ -131,7 +152,7 @@ export default function SendTab(props: any) {
             <Button
               text="cancel"
               onClick={handleCancel}
-              loading={props.status === "loading"}
+              isLoading={props.status === "loading"}
               color="warn"
             />
           </div>

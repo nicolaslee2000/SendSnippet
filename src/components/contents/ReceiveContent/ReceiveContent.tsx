@@ -1,56 +1,79 @@
-import { useRef, useState } from "react";
-import "./ReceiveTab.css";
+import { useEffect, useRef, useState } from "react";
+import "./ReceiveContent.css";
 import { CSSTransition } from "react-transition-group";
 import Button from "../../buttons/Button";
 import downloadIcon from "../../../assets/icons/downloadIcon.png";
 import AlertCopied from "../../AlertCopied/AlertCopied";
 import PincodeInput from "../../PincodeInput/PincodeInput";
-import { readText } from "../../../firebase/firebase";
+import { downloadFiles, readText } from "../../../firebase/firebase";
 import CopyButton from "../../buttons/CopyButton/CopyButton";
 import { SetState } from "../../../types/SetState";
 
-export interface ReceiveTabProps {
+export interface ReceiveContentProps {
   receivedText: string;
   setReceivedText: SetState<string>;
+  receivedFiles: File[];
+  setReceivedFiles: SetState<File[]>;
+  setIsAllowTabSwitch: SetState<boolean>;
 }
 
-export default function ReceiveTab(props: any) {
+export default function ReceiveContent({
+  receivedText,
+  setReceivedText,
+  setIsAllowTabSwitch,
+}: ReceiveContentProps) {
+  const [display, setDisplay] = useState<"enterKey" | "downloadDocuments">(
+    "enterKey"
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  // if window is sent or it is loading, disallow tab switch
+  useEffect(() => {
+    setIsAllowTabSwitch(!isLoading);
+  }, [isLoading, setIsAllowTabSwitch]);
+
   const DIGIT = 4;
-  const status = props.status;
-  const setStatus = props.setStatus;
   const [digitKey, setDigitKey] = useState<string[]>(Array(DIGIT).fill(""));
   const [copied, setCopied] = useState(false);
-  const [receivedText, setReceivedText] = useState<string>();
   //for shake animation when entered with wrong/incomplete key
   const [shake, setShake] = useState(false);
-  const [text, setText] = useState("example");
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   const refAlert = useRef(null);
   const handleDownload = async (e: any) => {
+    // FIX dont check returned text before validating digitkey
+    setIsLoading(true);
     const returnedText = await readText(digitKey.join(""));
-    // props.unsub();
+    setIsLoading(false);
     if (!/^\d{4}$/.test(digitKey.join("")) || returnedText === null) {
       setShake(true);
       return;
     }
-    console.log(props.unsub);
-    setReceivedText(returnedText);
-    setText("example");
-    setStatus("pending");
-    resetStates();
+    setReceivedText(returnedText!);
+    setCopied(false);
+    setDisplay("downloadDocuments");
   };
   const handleOk = (e: any) => {
-    setStatus("idle");
-    resetStates();
-  };
-  const resetStates = () => {
-    setDigitKey(Array(DIGIT).fill(""));
     setCopied(false);
+    setDisplay("enterKey");
   };
   const copy = () => {
     setCopied(true);
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(receivedText);
+  };
+  const handleDownloadFile = async () => {
+    setIsLoading(true);
+    try {
+      const returnedText = await readText(digitKey.join(""));
+      setReceivedText(returnedText!);
+      setCopied(false);
+      setIsLoading(false);
+      setDisplay("downloadDocuments");
+    } catch (e) {
+      await downloadFiles(digitKey.join(""));
+      // ERROR HANDLING
+      setIsLoading(false);
+      setDisplay("downloadDocuments");
+    }
   };
   return (
     <div className="tab-content" id="receiveTab-container">
@@ -66,7 +89,7 @@ export default function ReceiveTab(props: any) {
         </div>
       </CSSTransition>
       <CSSTransition
-        in={status !== "pending"}
+        in={display === "enterKey"}
         className="sendTab-content-transition-container"
         unmountOnExit
         timeout={300}
@@ -80,7 +103,7 @@ export default function ReceiveTab(props: any) {
               DIGIT={DIGIT}
               shake={shake}
               setShake={setShake}
-              handleDownload={handleDownload}
+              handleDownload={handleDownloadFile}
             />
           </div>
           {/* TODO: download on enter */}
@@ -88,21 +111,21 @@ export default function ReceiveTab(props: any) {
             <Button
               text=""
               icon={downloadIcon}
-              isLoading={props.status === "loading"}
-              onClick={handleDownload}
+              isLoading={isLoading}
+              onClick={handleDownloadFile}
             />
           </div>
         </div>
       </CSSTransition>
       <CSSTransition
-        in={props.status === "pending"}
+        in={display === "downloadDocuments"}
         className="sendTab-content-transition-container"
         unmountOnExit
         timeout={300}
         nodeRef={ref2}
       >
         <div ref={ref2}>
-          <div className="key-container2">
+          <div className="key-container2" id="keycontainertemp">
             <textarea
               autoFocus
               value={receivedText}
@@ -117,11 +140,7 @@ export default function ReceiveTab(props: any) {
           </a>
           {/* TODO: open link option */}
           <div className="cancelButton-container">
-            <Button
-              text="OK"
-              isLoading={props.status === "loading"}
-              onClick={handleOk}
-            />
+            <Button text="OK" isLoading={isLoading} onClick={handleOk} />
           </div>
         </div>
       </CSSTransition>

@@ -1,87 +1,47 @@
-import { useRef, useState } from "react";
+import React from "react";
 import "./TabContainer.css";
-import ReceiveTab from "../tabs/ReceiveTab/ReceiveTab";
-import SendTab from "../tabs/SendTab/SendTab";
-import { CSSTransition } from "react-transition-group";
-import download from "../../assets/icons/receive.png";
-import send from "../../assets/icons/send.png";
+import { tabs } from "../MainBox/MainBox";
+import receiveIcon from "../../assets/icons/receiveIcon.png";
+import sendIcon from "../../assets/icons/sendIcon.png";
+import { SetState } from "../../types/SetState";
+/**
+ *
+ * Container for navigation tabs
+ */
+export interface TabContainerProps {
+  currentTab: tabs;
+  setCurrentTab: SetState<tabs>;
+  allowTabSwitch: boolean;
+}
+export default function TabContainer({
+  currentTab,
+  setCurrentTab,
+  allowTabSwitch,
+}: TabContainerProps) {
+  const handleTabOnClick = (e: React.MouseEvent<HTMLElement>) => {
+    setCurrentTab(e.currentTarget.id as tabs);
+  };
 
-export default function TabContainer() {
-  //idle, pending, loading
-  const [status, setStatus] = useState("idle");
-  const [tab, setTab] = useState(1);
-  const ref1 = useRef(null);
-  const ref2 = useRef(null);
   return (
-    <div className="tabs-container">
-      <div className="tabs">
-        <input
-          type="radio"
-          checked={tab === 1}
-          id="tab1"
-          readOnly
-          disabled={status !== "idle"}
-          onClick={(e) => {
-            setTab(1);
-          }}
-        />
-        <label htmlFor="tab1" className="tab">
-          <div
-            style={{ alignItems: "center", display: "inline-flex", gap: "3px" }}
-          >
-            <img alt="Icon" src={send} width={24} height={24} />
-            Send
-          </div>
-        </label>
-        <input
-          type="radio"
-          id="tab2"
-          readOnly
-          checked={tab === 2}
-          disabled={status !== "idle"}
-          onClick={(e) => {
-            setTab(2);
-          }}
-        />
-        <label htmlFor="tab2" className="tab">
-          <div
-            style={{ alignItems: "center", display: "inline-flex", gap: "3px" }}
-          >
-            <img alt="Icon" src={download} width={24} height={24} />
-            Receive
-          </div>
-        </label>
-      </div>
-      <div
-        className="tabContent-container"
-        style={tab === 1 ? { borderTopLeftRadius: 0 } : { borderRadius: "5px" }}
+    <div id="tab-container">
+      <button
+        className={`tab ${currentTab === "sendTab" ? "selected" : ""}`}
+        id="sendTab"
+        onClick={handleTabOnClick}
+        disabled={!allowTabSwitch}
       >
-        <div className="absolute-helper-container">
-          {/* TODO: UseRef */}
-          <CSSTransition
-            in={tab === 1}
-            timeout={300}
-            classNames="tab-content-transition-container"
-            unmountOnExit
-            nodeRef={ref1}
-          >
-            <div ref={ref1}>
-              <SendTab status={status} setStatus={setStatus} />
-            </div>
-          </CSSTransition>
-          <CSSTransition
-            in={tab === 2}
-            timeout={300}
-            classNames="tab-content-transition-container"
-            unmountOnExit
-            nodeRef={ref2}
-          >
-            <div ref={ref2}>
-              <ReceiveTab status={status} setStatus={setStatus} />
-            </div>
-          </CSSTransition>
-        </div>
-      </div>
+        <img alt="SendIcon" src={sendIcon} className="tabIcon" />
+        Send
+      </button>
+      <button
+        className={`tab ${currentTab === "receiveTab" ? "selected" : ""}`}
+        id="receiveTab"
+        onClick={handleTabOnClick}
+        disabled={!allowTabSwitch}
+      >
+        <img alt="ReceiveIcon" src={receiveIcon} className="tabIcon" />
+        Receive
+      </button>
     </div>
   );
 }

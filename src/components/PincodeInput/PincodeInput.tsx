@@ -86,6 +86,7 @@ export default function PincodeInput(props: any) {
               onFocus={handleOnFocus}
               onPaste={handlePaste}
               id={i}
+              type="number"
             />
           );
         })}

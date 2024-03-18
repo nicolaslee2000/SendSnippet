@@ -1,7 +1,8 @@
 import { FieldValue } from "firebase/firestore";
-
-export type DigitStringOfLengthFour = `${number}${number}${number}${number}`;
-export interface document {
+/**
+ * interface for document type uploaded and received from firestore database
+ */
+export interface Document {
   data_type: "file" | "text";
   data: string;
   created: FieldValue;

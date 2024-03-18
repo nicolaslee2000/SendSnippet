@@ -1,20 +1,21 @@
 import "./App.css";
+import "./variables.css";
 import Layout from "./components/Layout/Layout";
-import { logUser } from "./firebase";
+import { downloadFiles, uploadKeys } from "./firebase/firebase";
 
 function App() {
   return (
     <div className="App">
       <Layout />
       <div>
-        <button
-          onClick={() => {
-            // uploadText("ff");
-            logUser();
+        {/* DEVELOPMENT */}
+        {/* <button
+          onClick={async () => {
+            uploadKeys();
           }}
         >
           test
-        </button>
+        </button> */}
       </div>
     </div>
   );

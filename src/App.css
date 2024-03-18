@@ -1,14 +1,34 @@
-
+/* Global CSS */
+* {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-primary), var(--font-secondary), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
 html,
 body {
-  background: #bdcbe5;
+  background: var(--color-background);
   align-items: center;
   justify-content: center;
 }
-.App {
-  margin: 0;
-  padding: 0;
+@media only screen and (min-width: 481px) {
+  body {
+    min-width: 450px;
+  }
 }
-* {
-  font-family: "Lexend", sans-serif;
+
+textarea {
+  resize: none;
+  font-size: 1em;
+  background-color: var(--color-background-textarea);
+  border: 0;
+  outline: none;
+}
+textarea:focus {
+  background-color: var(--color-background-textarea-selected);
+}
+textarea:focus::placeholder {
+  color: transparent;
 }

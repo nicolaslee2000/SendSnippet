@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import "./AlertCopied.css";
-import checkedIcon from "../../assets/icons/check.png";
+import checkedIcon from "../../assets/icons/checkIcon.png";
 import * as React from "react";
 export interface AlertCopiedProps {
   setCopied: React.Dispatch<React.SetStateAction<boolean>>;

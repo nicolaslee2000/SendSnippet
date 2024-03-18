@@ -2,3 +2,23 @@
   justify-content: center;
   display: flex;
 }
+#title {
+  font-family: "Dancing Script", sans-serif;
+  font-size: 5em;
+  text-align: center;
+  color: white;
+  padding: 2rem 0 2rem;
+  line-height: 0.95em;
+  text-shadow: var(--typography-shadow);
+}
+
+#title {
+}
+#mainBox-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#githubIcon {
+  max-width: 2rem;
+}
