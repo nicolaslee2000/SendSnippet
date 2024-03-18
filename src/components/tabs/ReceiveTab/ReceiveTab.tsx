@@ -7,6 +7,12 @@ import AlertCopied from "../../AlertCopied/AlertCopied";
 import PincodeInput from "../../PincodeInput/PincodeInput";
 import { readText } from "../../../firebase/firebase";
 import CopyButton from "../../buttons/CopyButton/CopyButton";
+import { SetState } from "../../../types/SetState";
+
+export interface ReceiveTabProps {
+  receivedText: string;
+  setReceivedText: SetState<string>;
+}
 
 export default function ReceiveTab(props: any) {
   const DIGIT = 4;
@@ -82,7 +88,7 @@ export default function ReceiveTab(props: any) {
             <Button
               text=""
               icon={downloadIcon}
-              loading={props.status === "loading"}
+              isLoading={props.status === "loading"}
               onClick={handleDownload}
             />
           </div>
@@ -113,7 +119,7 @@ export default function ReceiveTab(props: any) {
           <div className="cancelButton-container">
             <Button
               text="OK"
-              loading={props.status === "loading"}
+              isLoading={props.status === "loading"}
               onClick={handleOk}
             />
           </div>

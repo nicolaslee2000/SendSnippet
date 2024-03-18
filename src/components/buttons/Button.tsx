@@ -1,21 +1,34 @@
-import * as React from "react";
+import { MouseEvent } from "react";
 import "./Button.css";
-export default function Button(props: any) {
-  const color = props.color;
-  const onClick = props.onClick;
-  const text = props.text;
-  const loading = props.loading;
 
+// warn: red, primary: orange
+export type ButtonColors = "warn" | "primary";
+
+export interface ButtonProps {
+  color?: ButtonColors;
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
+  text: string;
+  isLoading: boolean;
+  icon?: string;
+}
+
+export default function Button({
+  color = "primary",
+  onClick,
+  text,
+  isLoading,
+  icon,
+}: ButtonProps) {
   return (
     <button
-      className={`button ${color} ${loading ? "button-loading" : ""}`}
+      className={`button ${color} ${isLoading ? "loading" : ""}`}
       onClick={onClick}
-      disabled={loading}
+      disabled={isLoading}
     >
-      {loading ? (
+      {isLoading ? (
         ""
-      ) : props.icon ? (
-        <img src={props.icon} alt="Icon" width={"24px"} height={"24px"} />
+      ) : icon ? (
+        <img src={icon} alt={text} className="buttonIcon" />
       ) : (
         text
       )}

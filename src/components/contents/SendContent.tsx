@@ -1,6 +1,5 @@
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import { FocusEvent, MouseEvent, useEffect, useRef, useState } from "react";
 import { SetState } from "../../types/SetState";
-import { status } from "../MainBox/MainBox";
 import "./SendContent.css";
 import { CSSTransition } from "react-transition-group";
 import Button from "../buttons/Button";
@@ -11,12 +10,15 @@ import {
   uploadText,
 } from "../../firebase/firebase";
 import { Unsubscribe } from "firebase/firestore";
+import {
+  CONTENT_TRANSITION_CONTAINER_CLASSNAME,
+  TIME_LIMIT_SECONDS,
+} from "../../constants/constants";
 
 export interface SendContentProps {
   tts: string;
   setTts: SetState<string>;
-  status: status;
-  setStatus: SetState<status>;
+  setAllowTabSwitch: SetState<boolean>;
 }
 
 /**
@@ -29,8 +31,7 @@ export interface SendContentProps {
 export default function SendContent({
   tts,
   setTts,
-  status,
-  setStatus,
+  setAllowTabSwitch,
 }: SendContentProps) {
   //DEVELOPMENT
   const qrlink = "https://sendsnippet.web.app/";
@@ -42,25 +43,32 @@ export default function SendContent({
   //warning to indicate if send button clicked and no snippet present
   const noTextWarningRef = useRef<HTMLDivElement>(null);
 
-  const TIME_LIMIT_MINUTES = 10;
   //Time limit for receiving documet. Default: 10 min
-  const [timeLimit, setTimeLimit] = useState<number>(TIME_LIMIT_MINUTES * 60);
+  const [timeLimit, setTimeLimit] = useState<number>(TIME_LIMIT_SECONDS);
+
+  const [isLoading, setIsLoading] = useState(false);
+  // toSend is default window with text area, sent is window on which key will be displayed
+  const [display, setDisplay] = useState<"toSend" | "sent">("toSend");
+  // if window is sent or it is loading, disallow tab switch
+  useEffect(() => {
+    setAllowTabSwitch(display !== "sent" && !isLoading);
+  }, [display, isLoading, setAllowTabSwitch]);
 
   //Starts timeLimit countdown when status changes to pending. Fires document expired event when timeLimit reaches 0
   useEffect(() => {
     if (timeLimit <= 0) {
       // TODO: document expired event
-      setTimeLimit(TIME_LIMIT_MINUTES * 60);
-      setStatus("idle");
+      setTimeLimit(TIME_LIMIT_SECONDS);
+      setDisplay("toSend");
     }
     const timer =
-      status === "pending"
+      display === "sent"
         ? timeLimit > 0
           ? setInterval(() => setTimeLimit(timeLimit - 1), 1000)
           : undefined
         : undefined;
     return () => clearInterval(timer);
-  }, [timeLimit, status, setStatus]);
+  }, [timeLimit, display]);
   // Key received after uploading document
   const [receivedKey, setReceivedKey] = useState<string>();
 
@@ -74,11 +82,8 @@ export default function SendContent({
     };
   }, [unsub]);
 
-  const handleTtsChange = (e: any) => {
-    setTts(e.target.value);
-  };
   // select all and paste from clipboard if browser supported
-  const handleFocus = async (e: any) => {
+  const handleFocus = async (e: FocusEvent<HTMLTextAreaElement>) => {
     let text = "";
     try {
       text = await navigator.clipboard.readText();
@@ -92,75 +97,71 @@ export default function SendContent({
   };
   // callback to be fired when document on pending is downloaded by receiver
   const handleDocDeleted = () => {
-    console.log("deleted");
+    setDisplay("toSend");
   };
   // send button clicked
-  const handleSend = async (e: any) => {
+  const handleSend = async (e: MouseEvent<HTMLButtonElement>) => {
     // validate that text exists
     if (!tts) {
       noTextWarningRef.current!.innerHTML =
         "*type in/paste the text you want to send!";
       return;
     }
-    setStatus("loading");
     try {
+      setIsLoading(true);
       // get key after uploading document
       const key = await uploadText(tts);
       setReceivedKey(key);
       unsub = unsubscribeDeleteEventListener(key!, handleDocDeleted);
     } catch (e) {
       console.error(e);
-      setStatus("idle");
+      setDisplay("toSend");
       return;
     }
-    setStatus("pending");
+    setIsLoading(false);
+    setDisplay("sent");
   };
   // cancel button clicked
   const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {
     deleteDocument(receivedKey);
-    setStatus("idle");
+    setDisplay("toSend");
   };
 
   return (
     <div id="sendContent">
       <CSSTransition
-        in={status !== "pending"}
-        className="idle-pending-transition-container"
+        in={display === "toSend"}
+        className={CONTENT_TRANSITION_CONTAINER_CLASSNAME}
         unmountOnExit
         timeout={300}
         nodeRef={ref1}
       >
-        <div ref={ref1}>
+        <div ref={ref1} className={CONTENT_TRANSITION_CONTAINER_CLASSNAME}>
           <textarea
             autoFocus
             value={tts}
-            onChange={handleTtsChange}
-            className={`sendTab-textarea ${
-              status === "loading" ? "loading" : ""
-            }`}
+            onChange={(e) => {
+              setTts(e.target.value);
+            }}
+            id="toSend-textarea"
             placeholder="text snippet to send"
             onFocus={handleFocus}
-            disabled={status !== "idle"}
+            disabled={isLoading}
           ></textarea>
-          <div className="noTextWarning" ref={noTextWarningRef}></div>
-
-          <div className="sendButton-container">
-            <Button
-              text="Send"
-              onClick={handleSend}
-              loading={status === "loading"}
-            />
+          <div id="noTextWarning" ref={noTextWarningRef}></div>
+          <div id="sendButton-container">
+            <Button text="Send" onClick={handleSend} isLoading={isLoading} />
           </div>
         </div>
       </CSSTransition>
       <CSSTransition
-        in={status === "pending"}
-        className="idle-pending-transition-container"
+        in={display === "sent"}
+        className={CONTENT_TRANSITION_CONTAINER_CLASSNAME}
         unmountOnExit
         timeout={300}
         nodeRef={ref2}
       >
-        <div ref={ref2}>
+        <div ref={ref2} className={CONTENT_TRANSITION_CONTAINER_CLASSNAME}>
           {/* TODO: key expired alert message */}
           <div className="key-container">
             <div>Waiting...</div>
@@ -179,7 +180,7 @@ export default function SendContent({
             <Button
               text="cancel"
               onClick={handleCancel}
-              loading={status === "loading"}
+              isLoading={isLoading}
               color="warn"
             />
           </div>

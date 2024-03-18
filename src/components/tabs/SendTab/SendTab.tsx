@@ -121,7 +121,7 @@ export default function SendTab(props: any) {
             <Button
               text="Send"
               onClick={handleSend}
-              loading={props.status === "loading"}
+              isLoading={props.status === "loading"}
             />
           </div>
         </div>
@@ -152,7 +152,7 @@ export default function SendTab(props: any) {
             <Button
               text="cancel"
               onClick={handleCancel}
-              loading={props.status === "loading"}
+              isLoading={props.status === "loading"}
               color="warn"
             />
           </div>

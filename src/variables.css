@@ -1,10 +1,15 @@
 :root {
   --font-primary: "Lexend";
   --font-secondary: "Roboto";
-  --color-background: #bdcbe5;
   --typography-shadow: 3px 3px rgba(0, 0, 0, 0.1);
   --container-shadow: 0 3px rgba(0, 0, 0, 0.2);
-  --typography-color-gray: #808080;
-  --typography-color-blue: #2b82d9;
   --transition-duration-tabs: 0.3s;
+
+  --color-background: hsl(219, 43%, 83%);
+  --color-background-content: hsl(0, 0%, 100%);
+  --color-background-textarea: hsl(0, 12%, 93%);
+  --color-background-textarea-selected: hsl(0, 12%, 90%);
+  --color-red: hsl(0, 100%, 50%);
+  --color-typography-gray: hsl(0, 0%, 50%);
+  --color-typography-blue: hsl(210, 70%, 51%);
 }

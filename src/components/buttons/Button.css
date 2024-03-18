@@ -1,7 +1,6 @@
 .button {
   align-items: center;
   background-clip: padding-box;
-  background-color: #fa6400;
   border: 1px solid transparent;
   border-radius: 0.25rem;
   box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
@@ -9,9 +8,7 @@
   color: #fff;
   cursor: pointer;
   display: inline-flex;
-  /* font-family: system-ui, -apple-system, system-ui, "Helvetica Neue", Helvetica,
-    Arial, sans-serif; */
-  font-size: 16px;
+  font-size: 1em;
   font-weight: 600;
   justify-content: center;
   line-height: 1.25;
@@ -29,37 +26,42 @@
   width: 100%;
   position: relative;
 }
-
 .button:hover,
 .button:focus {
-  background-color: #fb8332;
   box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
 }
-
 .button:hover {
   transform: translateY(-1px);
 }
-
 .button:active {
-  background-color: #c85000;
   box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
   transform: translateY(0);
 }
+.button.primary {
+  background-color: hsl(24, 100%, 50%);
+}
 .button.warn {
-  background-color: #fa3200;
+  background-color: hsl(12, 100%, 50%);
+}
+.button.primary:hover,
+button.primary.focus {
+  background-color: hsl(24, 100%, 55%);
 }
 .button.warn:hover,
 .button.warn:focus {
-  background-color: #fb4d32;
+  background-color: hsl(12, 100%, 65%);
 }
-.button.warn.active {
-  background-color: #c80000;
+.button.primary:active {
+  background-color: hsl(24, 100%, 45%);
 }
-.button-loading::after {
+.button.warn:active {
+  background-color: hsl(12, 100%, 45%);
+}
+.button.loading::after {
   content: "";
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 1em;
+  height: 1em;
   top: 0;
   left: 0;
   right: 0;
@@ -78,4 +80,7 @@
   to {
     transform: rotate(1turn);
   }
+}
+.buttonIcon {
+  max-width: 1.2rem;
 }
