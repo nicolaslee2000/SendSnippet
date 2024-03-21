@@ -9,6 +9,7 @@ import {
   list,
   ref,
   uploadBytes,
+  uploadBytesResumable,
 } from "firebase/storage";
 import {
   getFirestore,
@@ -21,6 +22,8 @@ import {
   onSnapshot,
   deleteDoc,
   Transaction,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import { Document } from "../types/Document";
 import JSZip from "jszip";
@@ -43,12 +46,12 @@ const firestore = getFirestore();
 const storage = getStorage();
 const functions = getFunctions();
 // DEVELOPMENT
-if (window.location.hostname === "localhost") {
-  // Point to the Storage emulator running on localhost.
-  connectStorageEmulator(storage, "127.0.0.1", 5004);
-  connectFirestoreEmulator(firestore, "127.0.0.1", 5002);
-  connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-}
+// if (window.location.hostname === "localhost") {
+//   // Point to the Storage emulator running on localhost.
+//   connectStorageEmulator(storage, "127.0.0.1", 5004);
+//   connectFirestoreEmulator(firestore, "127.0.0.1", 5002);
+//   connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+// }
 
 const keyspace = Array.from({ length: 10000 }, (_, i) => i).map((num) =>
   num.toString().padStart(4, "0")
@@ -69,24 +72,28 @@ export const uploadKeys = async () => {
  * @returns 4 digit key
  */
 const generateKey = async (receivedTransaction: Transaction | null = null) => {
-  return await runTransaction(
-    firestore,
-    async (transaction): Promise<string> => {
-      transaction = receivedTransaction ? receivedTransaction : transaction;
-      const keysDocRef = doc(firestore, "keyspace", "keys");
-      const keys = await transaction.get(keysDocRef);
-      if (!keys.exists() || keys.get("array").length === 0) {
-        throw new Error("keys document error.");
+  try {
+    return await runTransaction(
+      firestore,
+      async (transaction): Promise<string> => {
+        transaction = receivedTransaction ? receivedTransaction : transaction;
+        const keysDocRef = doc(firestore, "keyspace", "keys");
+        const keys = await transaction.get(keysDocRef);
+        if (!keys.exists() || keys.get("array").length === 0) {
+          throw new Error("keys document error.");
+        }
+        const array: string[] = await keys.get("array");
+        const randomIndex = Math.floor(Math.random() * array.length);
+        const generatedDigitKey = array[randomIndex];
+        transaction.update(keysDocRef, {
+          array: arrayRemove(generatedDigitKey),
+        });
+        return generatedDigitKey;
       }
-      const array: string[] = await keys.get("array");
-      const randomIndex = Math.floor(Math.random() * array.length);
-      const generatedDigitKey = array[randomIndex];
-      transaction.update(keysDocRef, {
-        array: arrayRemove(generatedDigitKey),
-      });
-      return generatedDigitKey;
-    }
-  );
+    );
+  } catch (e) {
+    throw new Error("key generation error");
+  }
 };
 
 /**
@@ -162,8 +169,7 @@ export const deleteDocument = async (key: string | undefined) => {
       )
     );
   } catch (e) {
-    console.error(e);
-    return;
+    throw new Error("document deletion error");
   }
 };
 
@@ -198,16 +204,19 @@ export const unsubscribeDeleteEventListener = (
  * @param generated 4 digit key
  */
 export const uploadFiles = async (files: File[]) => {
+  let key: string;
   try {
-    const key = await generateKey();
+    key = await generateKey();
     files.forEach((f) => {
       const fileRef = ref(storage, `files/${key}/${f.name}`);
-      uploadBytes(fileRef, f);
+      const uploadTask = uploadBytesResumable(fileRef, f);
     });
     return key;
   } catch (e) {
-    console.error(e);
-    return;
+    // add key back to keyspace if error occured
+    updateDoc(doc(firestore, "keyspace", "keys"), {
+      array: arrayUnion(key!),
+    });
   }
 };
 
@@ -244,14 +253,14 @@ export const downloadFiles = async (key: string) => {
       })
       .reduce((acc, curr) => acc.then(() => curr), Promise.resolve());
     const blob = await jszip.generateAsync({ type: "blob" });
-    downloadFromBlob(blob, "download.zip");
+    downloadFromBlob(blob, "sendSnippet.zip");
   } catch (e) {
     console.error(e);
     return;
   }
 };
 
-// download to local machine using fetch api
+// private helper function to download to local machine using fetch api
 const downloadFromBlob = async (blob: Blob, filename: string) => {
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
