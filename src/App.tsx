@@ -1,7 +1,7 @@
 import "./App.css";
 import "./variables.css";
 import Layout from "./components/Layout/Layout";
-import { downloadFiles, uploadKeys } from "./firebase/firebase";
+import { downloadFiles, keytest, uploadKeys } from "./firebase/firebase";
 
 function App() {
   return (
@@ -9,13 +9,14 @@ function App() {
       <Layout />
       <div>
         {/* DEVELOPMENT */}
-        {/* <button
+        <button
           onClick={async () => {
-            uploadKeys();
+            // uploadKeys();
+            await keytest();
           }}
         >
           test
-        </button> */}
+        </button>
       </div>
     </div>
   );

@@ -46,12 +46,12 @@ const firestore = getFirestore();
 const storage = getStorage();
 const functions = getFunctions();
 // DEVELOPMENT
-// if (window.location.hostname === "localhost") {
-//   // Point to the Storage emulator running on localhost.
-//   connectStorageEmulator(storage, "127.0.0.1", 5004);
-//   connectFirestoreEmulator(firestore, "127.0.0.1", 5002);
-//   connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-// }
+if (window.location.hostname === "localhost") {
+  // Point to the Storage emulator running on localhost.
+  connectStorageEmulator(storage, "127.0.0.1", 5004);
+  connectFirestoreEmulator(firestore, "127.0.0.1", 5002);
+  connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+}
 
 const keyspace = Array.from({ length: 10000 }, (_, i) => i).map((num) =>
   num.toString().padStart(4, "0")
@@ -122,6 +122,33 @@ export const uploadText = async (text: string) => {
   } catch (e) {
     console.error(e);
     return;
+  }
+};
+export const keytest = async () => {
+  try {
+    for (let i = 0; i < 5; i++) {
+      try {
+        setDoc(doc(firestore, "data/0000"), {
+          data: "aa",
+          data_type: "dd",
+          created: serverTimestamp(),
+        })
+          .then(() => {
+            console.log("resolved");
+          })
+          .catch((a: Error) => {
+            console.log(a);
+            console.log(typeof a);
+            console.log("error");
+          });
+        break;
+      } catch (e) {
+        console.log("second error");
+      }
+      console.log(i);
+    }
+  } catch (e) {
+    console.log("first error");
   }
 };
 
