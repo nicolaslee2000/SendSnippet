@@ -38,24 +38,24 @@
   transform: translateY(0);
 }
 .button.primary {
-  background-color: hsl(24, 100%, 50%);
+  background-color: var(--color-green);
 }
 .button.warn {
-  background-color: hsl(12, 100%, 50%);
+  background-color: var(--color-green);
 }
 .button.primary:hover,
 button.primary.focus {
-  background-color: hsl(24, 100%, 55%);
+  background-color: var(--color-green);
 }
 .button.warn:hover,
 .button.warn:focus {
-  background-color: hsl(12, 100%, 65%);
+  background-color: var(--color-green);
 }
 .button.primary:active {
-  background-color: hsl(24, 100%, 45%);
+  background-color: var(--color-green);
 }
 .button.warn:active {
-  background-color: hsl(12, 100%, 45%);
+  background-color: var(--color-green);
 }
 .button.loading::after {
   content: "";

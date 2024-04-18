@@ -25,18 +25,26 @@ import {
   updateDoc,
   arrayUnion,
 } from "firebase/firestore";
-import { Document } from "../types/Document";
+import { Document } from "../types/document";
 import JSZip from "jszip";
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_APIKEY,
-  authDomain: process.env.REACT_APP_AUTHDOMAIN,
-  databaseURL: process.env.REACT_APP_DATABASEURL,
-  projectId: process.env.REACT_APP_PROJECTID,
-  storageBucket: process.env.REACT_APP_STORAGEBUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGINGSENDERID,
-  appId: process.env.REACT_APP_APPID,
-  measurementId: process.env.REACT_APP_MEASUREMENTID,
+  apiKey: "AIzaSyDn0AadOstv8SlCqXXyzfl1skUTomC3W3U",
+
+  authDomain: "sendsnippet.firebaseapp.com",
+
+  databaseURL: "https://sendsnippet-default-rtdb.firebaseio.com",
+
+  projectId: "sendsnippet",
+
+  storageBucket: "sendsnippet.appspot.com",
+
+  messagingSenderId: "465404866710",
+
+  appId: "1:465404866710:web:b7162d1f7e6b1baa9dd2b7",
+
+  measurementId: "G-GDJ3W74X5X"
+  
 };
 
 const app = initializeApp(firebaseConfig);
