@@ -12,6 +12,7 @@ textarea {
 }
 textarea:focus {
   outline: none;
+  /* kdg */
   border: 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.19), 0 1px 1px rgba(0, 0, 0, 0.23);
 }
