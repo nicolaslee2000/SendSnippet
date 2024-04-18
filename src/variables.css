@@ -5,7 +5,8 @@
   --container-shadow: 0 3px rgba(0, 0, 0, 0.2);
   --transition-duration-tabs: 0.3s;
 
-  --color-background: hsl(219, 43%, 83%);
+  --color-background: hsl(43, 59%, 89%);
+  --color-primary: hsl(163, 79%, 26%);
   --color-background-content: hsl(0, 0%, 100%);
   --color-background-textarea: hsl(0, 12%, 93%);
   --color-background-textarea-selected: hsl(0, 12%, 90%);
