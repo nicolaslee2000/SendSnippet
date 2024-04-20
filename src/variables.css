@@ -7,6 +7,7 @@
 
   --color-background:linear-gradient(to right, #74ebd5, #acb6e5);
   --color-primary: hsl(33, 41%, 95%);
+  --color-button-hover: #a9b8e4;
   --color-green:#90d0dd;
   --color-purple:#acb6e5;
   --color-background-content: hsl(0, 0%, 100%);

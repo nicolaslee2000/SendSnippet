@@ -1,0 +1,14 @@
+[
+  {
+    "color": "white",
+    "type": "dog",
+    "size": "nano",
+    "name": "Sütlaç"
+  },
+  {
+    "color": "brown",
+    "type": "dog",
+    "size": "nano",
+    "name": "Cookie"
+  }
+]

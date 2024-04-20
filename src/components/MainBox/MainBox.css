@@ -5,6 +5,7 @@
   flex-direction: column;
   width: 90vw;
   height: 50vh;
+  
 }
 @media (min-width: 781px) {
   #mainBox {

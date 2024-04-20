@@ -3,13 +3,14 @@
   display: flex;
 }
 #title {
-  font-family: "Dancing Script", sans-serif;
-  font-size: 5em;
+  font-family: "Yanone Kaffeesatz";
+  font-size: 6em;
   text-align: center;
   color: var(--color-primary);
   padding: 2rem 0 2rem;
   line-height: 0.95em;
   text-shadow: var(--typography-shadow);
+  font-weight: 200;
 }
 
 #title {
