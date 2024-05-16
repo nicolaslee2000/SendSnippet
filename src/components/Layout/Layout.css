@@ -1,15 +1,25 @@
+
+
+
 #footer {
   justify-content: center;
   display: flex;
 }
+
 #title {
-  font-family: "Yanone Kaffeesatz";
+  font-family: "LGC", "Arial", "sans-serif";
+  font-weight: 300;
+  font-style: normal;
   font-size: 6em;
   text-align: center;
-  color: var(--color-primary);
+  color: transparent;
+  background: #52402c;
   padding: 2rem 0 2rem;
   line-height: 0.95em;
   text-shadow: var(--typography-shadow);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
   font-weight: 200;
 }
 

@@ -21,6 +21,7 @@
   -ms-transition-duration: var(--transition-duration-tabs);
   -moz-transition-duration: var(--transition-duration-tabs);
   -webkit-transition-duration: var(--transition-duration-tabs);
+  opacity:0.
 }
 .tab:hover {
   opacity: 1;

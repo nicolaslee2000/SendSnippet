@@ -1,9 +1,19 @@
+@font-family{
+  font-family: LGC;
+  src: url(LGC.ttf);
+}
+
+
 :root {
+ 
   --font-primary: "Lexend";
   --font-secondary: "Roboto";
-  --typography-shadow: 3px 3px rgba(0, 0, 0, 0.1);
-  --container-shadow: 0 3px rgba(0, 0, 0, 0.2);
+  --typography-shadow:  
+  0px 3px 3px #cfc6bc36;
+
+  --container-shadow: 0 3px rgba(0, 0, 0, 0.0.1);
   --transition-duration-tabs: 0.3s;
+  --title-color: rgb(185, 122, 64);
 
   --color-background:linear-gradient(to right, #74ebd5, #acb6e5);
   --color-primary: hsl(33, 41%, 95%);

@@ -13,7 +13,7 @@ export default function Layout() {
     <div id="main-layout-container">
       <div id="header">
         <div id="title">
-          S E N D&nbsp;&nbsp;S N I P P E T
+          send snippet.
         </div>
       </div>
       <div id="mainBox-container">

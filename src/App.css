@@ -9,7 +9,8 @@
 }
 html,
 body {
-  background: var(--color-background);
+  background-image: url(background.png);
+  background-color: rgb(239, 218, 204);
   align-items: center;
   justify-content: center;
 }
