@@ -100,7 +100,7 @@ public final class TransferService extends Service {
             }
             JSONObject created = TransferApi.request("create", TransferData.json(
                     "id", id, "owner", owner, "files", manifest,
-                    "text", draft.getString("text"), "lifetime", draft.getInt("lifetime")));
+                    "text", draft.getString("text"), "lifetime", draft.getInt("lifetime"), "codeLength", 4));
             checkCancelled();
             JSONObject result = created.optJSONObject("transfer");
             if (result == null) {

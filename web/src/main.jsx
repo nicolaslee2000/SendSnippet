@@ -246,7 +246,7 @@ function SendPanel({ active, now, copy, notify, remember, revoke }) {
       if (!job.current) job.current = await keyPair()
       const draft = job.current
       const manifest = files.map(({ name, size }) => ({ name, size }))
-      const created = await api('create', { ...draft, text, files: manifest, lifetime })
+      const created = await api('create', { ...draft, text, files: manifest, lifetime, codeLength: 4 })
       let transfer = created.transfer
       if (!transfer) {
         if (created.token) {
@@ -369,6 +369,8 @@ function SharePanel({ item, now, copy, notify, revoke, close }) {
   const [revoking, setRevoking] = useState(false)
   const link = transferLink(item.id)
   const expired = item.expiresAt <= now
+  const codeExpiresAt = item.codeExpiresAt ?? item.expiresAt
+  const codeExpired = codeExpiresAt <= now
   useEffect(() => {
     let active = true
     QRCode.toDataURL(link, { width: 250, margin: 2, color: { dark: '#211a3c', light: '#ffffff' } })
@@ -397,9 +399,12 @@ function SharePanel({ item, now, copy, notify, revoke, close }) {
     {!expired && <>
       <div className="share-card">
         <div>
-          <span className="field-label">Receive code</span>
-          <div className="share-code">{formatCode(item.code)}</div>
-          <Button icon={Copy} onClick={() => copy(formatCode(item.code), 'Code copied')}>Copy code</Button>
+          <span className="field-label">{codeExpired ? 'Receive code expired' : 'Receive code'}</span>
+          {codeExpired ? <p className="code-time">Use the link or QR to receive.</p> : <>
+            <div className="share-code">{formatCode(item.code)}</div>
+            {item.code.length === 4 && <p className="code-time">{timeLabel(codeExpiresAt, now)}</p>}
+            <Button icon={Copy} onClick={() => copy(formatCode(item.code), 'Code copied')}>Copy code</Button>
+          </>}
         </div>
         {qr && <img src={qr} alt="QR code for this transfer" />}
       </div>
@@ -474,11 +479,11 @@ function ReceivePanel({ now, copy, notify, remember, openRequest }) {
   }
 
   return <div className="panel">
-    <SectionTitle title="Receive a transfer">Enter the receive code, paste a link, or scan its QR.</SectionTitle>
+    <SectionTitle title="Receive a transfer">Enter the 4-digit code, paste a link, or scan its QR.</SectionTitle>
     <form className="receive-form" onSubmit={event => { event.preventDefault(); receive(value) }}>
       <label className="field-label" htmlFor="receive-code">Code or link</label>
       <div className="receive-entry">
-        <input id="receive-code" placeholder="ABCD 1234" value={value} maxLength="300"
+        <input id="receive-code" placeholder="1234" value={value} maxLength="300"
           onChange={event => setValue(event.target.value)} spellCheck="false" autoComplete="off" autoCapitalize="characters" />
         <IconButton icon={QrCode} label="Scan QR code" onClick={() => setScanning(true)} />
       </div>

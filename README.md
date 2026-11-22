@@ -2,7 +2,7 @@
 
 [Open the web app](https://sendsnippet.web.app) · [Download the Android APK](https://github.com/nicolaslee2000/SendSnippet/releases/latest/download/SendSnippet.apk)
 
-Send files and text between devices without an account. Add up to 20 files, up to 10 GiB per file and 20 GiB total, and an optional text snippet up to 64 KiB. Share the 8-character code, link, or QR. Choose a 15-minute, 1-hour, or 24-hour lifetime. The timer starts when the transfer is ready.
+Send files and text between devices without an account. Add up to 20 files, up to 10 GiB per file and 20 GiB total, and an optional text snippet up to 64 KiB. Share a 4-digit code, link, or QR. The code is valid for 5 minutes after the transfer is ready. The link and QR stay valid for the chosen transfer lifetime of 15 minutes, 1 hour, or 24 hours.
 
 The web app supports drag and drop, clipboard files, QR scanning, dark mode, local activity, and sender revocation. Keep the tab open to pause or resume an in-progress file upload. A retry can also reuse files that finished uploading.
 

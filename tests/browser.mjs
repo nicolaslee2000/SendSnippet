@@ -30,6 +30,7 @@ try {
   await page.getByAltText('QR code for this transfer').waitFor()
   const link = await page.getByRole('textbox', { name: 'Transfer link' }).inputValue()
   const code = await page.locator('.share-code').textContent()
+  assert.match(code, /^\d{4}$/)
 
   const phone = await receiver.newPage()
   await phone.goto(link)

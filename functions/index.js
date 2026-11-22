@@ -1,4 +1,5 @@
 import express from 'express'
+import { isIP } from 'node:net'
 import { pipeline } from 'node:stream/promises'
 import { initializeApp } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
@@ -7,7 +8,7 @@ import { getStorage } from 'firebase-admin/storage'
 import { onRequest } from 'firebase-functions/v2/https'
 import { onSchedule } from 'firebase-functions/v2/scheduler'
 import { error as logError, warn } from 'firebase-functions/logger'
-import { ApiError, DAY, GIB, disposition, hash, makeCode, normalizeCode,
+import { ApiError, DAY, GIB, SHORT_CODE_TTL, codeDeadline, disposition, hash, isShortCode, makeCode, normalizeCode,
   ownerMatches, validCode, validFile, validId, validOwner, validateDraft } from './protocol.js'
 
 const PROJECT = process.env.GCLOUD_PROJECT || 'sendsnippet'
@@ -37,27 +38,38 @@ app.use((req, res, next) => {
 
 function quotaRefs(req, group, now, window) {
   const period = Math.floor(now / window)
-  const ip = hash(period + ':' + (req.ip || 'unknown')).slice(0, 32)
+  let address = req.ip
+  if (group === 'short-code' && !EMULATOR) {
+    // Google's edge appends the client and forwarding-rule addresses to the chain.
+    const forwarded = req.get('x-forwarded-for')?.split(',')
+    const client = forwarded?.at(-2)?.trim()
+    if (client && isIP(client)) address = client
+  }
+  const ip = hash(period + ':' + (address || 'unknown')).slice(0, 32)
   return [quotas.doc(group + '-' + period + '-' + ip), quotas.doc(group + '-' + period)]
 }
 
-function charge(tx, snap, bytes, maxCount, maxBytes, expires) {
+function charge(tx, snap, bytes, maxCount, maxBytes, expires,
+  message = 'The transfer limit has been reached. Try again later.') {
   const count = (snap.get('count') ?? 0) + 1
   const total = (snap.get('bytes') ?? 0) + bytes
   if (count > maxCount || total > maxBytes) {
-    throw new ApiError(429, 'The transfer limit has been reached. Try again later.')
+    throw new ApiError(429, message)
   }
   tx.set(snap.ref, { count, bytes: total, purgeAt: Timestamp.fromMillis(expires) })
 }
 
 async function limitAccess(req, group, perIp, global, bytes = 0, maxBytes = Infinity) {
   const now = Date.now()
-  const window = group === 'download' ? DAY : 10 * 60_000
+  const window = { download: DAY, 'short-code': SHORT_CODE_TTL }[group] ?? 10 * 60_000
+  const message = group === 'short-code'
+    ? 'Too many code attempts. Try again in a few minutes or use the transfer link.'
+    : undefined
   const expires = (Math.floor(now / window) + 1) * window + GRACE
   await db.runTransaction(async tx => {
     const [ip, all] = await tx.getAll(...quotaRefs(req, group, now, window))
-    charge(tx, ip, bytes, perIp, Infinity, expires)
-    charge(tx, all, bytes, global, maxBytes, expires)
+    charge(tx, ip, bytes, perIp, Infinity, expires, message)
+    charge(tx, all, bytes, global, maxBytes, expires, message)
   })
 }
 
@@ -81,7 +93,7 @@ function current(data) {
 
 function receipt(id, data, sender = false) {
   const item = { id, text: data.text, files: data.files, expiresAt: data.expiresAt }
-  return sender ? { ...item, code: data.code } : item
+  return sender ? { ...item, code: data.code, codeExpiresAt: data.codeExpiresAt ?? data.expiresAt } : item
 }
 
 async function uploadState(id, data) {
@@ -108,10 +120,10 @@ async function missingFiles(id, files) {
 }
 
 async function create(req) {
-  const { id, owner, text, lifetime, files, total } = validateDraft(req.body)
+  const { id, owner, text, lifetime, codeLength, files, total } = validateDraft(req.body)
   const ref = transfers.doc(id)
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const code = makeCode()
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const code = makeCode(codeLength)
     const codeRef = codes.doc(code)
     const now = Date.now()
     const data = await db.runTransaction(async tx => {
@@ -124,6 +136,7 @@ async function create(req) {
       const expiresAt = now + (files.length ? DAY : lifetime * 60_000)
       const transfer = {
         state: files.length ? 'draft' : 'ready', code, text, files, lifetime,
+        codeExpiresAt: files.length ? null : codeDeadline(code, now, expiresAt),
         ownerHash: hash(owner), expiresAt, purgeAt: Timestamp.fromMillis(expiresAt + GRACE),
       }
       tx.create(ref, transfer)
@@ -150,24 +163,35 @@ async function complete(req) {
   return db.runTransaction(async tx => {
     const latest = current(owned(await tx.get(ref), req.body.owner))
     if (latest.state === 'ready') return receipt(ref.id, latest, true)
-    const expiresAt = Date.now() + latest.lifetime * 60_000
-    tx.update(ref, { state: 'ready', expiresAt, purgeAt: Timestamp.fromMillis(expiresAt + GRACE) })
-    return receipt(ref.id, { ...latest, expiresAt }, true)
+    const now = Date.now()
+    const expiresAt = now + latest.lifetime * 60_000
+    const codeExpiresAt = codeDeadline(latest.code, now, expiresAt)
+    tx.update(ref, { state: 'ready', expiresAt, codeExpiresAt, purgeAt: Timestamp.fromMillis(expiresAt + GRACE) })
+    return receipt(ref.id, { ...latest, expiresAt, codeExpiresAt }, true)
   })
 }
 
 async function findTransfer(body) {
   const code = normalizeCode(body?.code)
   let id = body?.id
-  if (!validId(id) && validCode(code)) id = (await codes.doc(code).get()).get('id')
+  const byCode = !validId(id)
+  if (byCode && validCode(code)) id = (await codes.doc(code).get()).get('id')
   if (!validId(id)) throw new ApiError(404, MISSING)
   const data = (await transfers.doc(id).get()).data()
-  if (data?.state !== 'ready' || data.expiresAt <= Date.now()) throw new ApiError(404, MISSING)
+  const now = Date.now()
+  if (data?.state !== 'ready' || data.expiresAt <= now ||
+      (byCode && (data.code !== code || (data.codeExpiresAt ?? data.expiresAt) <= now))) {
+    throw new ApiError(404, MISSING)
+  }
   return [id, data]
 }
 
 async function receive(req) {
-  await limitAccess(req, 'receive', 120, 12_000)
+  if (!validId(req.body?.id) && isShortCode(normalizeCode(req.body?.code))) {
+    await limitAccess(req, 'short-code', 8, 150)
+  } else {
+    await limitAccess(req, 'receive', 120, 12_000)
+  }
   const [id, data] = await findTransfer(req.body)
   return receipt(id, data)
 }

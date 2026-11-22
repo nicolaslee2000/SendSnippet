@@ -66,8 +66,12 @@ final class TransferData {
         }
         String code = value.toUpperCase(Locale.ROOT).replaceAll("[\\s-]", "")
                 .replace('O', '0').replace('I', '1').replace('L', '1');
-        if (code.matches("[0-9A-HJKMNP-TV-Z]{8}")) return json("code", code);
-        throw new IllegalArgumentException("Enter an 8-character code or a SendSnippet link.");
+        if (code.matches("(?:[0-9]{4}|[0-9A-HJKMNP-TV-Z]{8})")) return json("code", code);
+        throw new IllegalArgumentException("Enter a 4-digit code or a SendSnippet link.");
+    }
+
+    static long codeExpiry(JSONObject transfer) {
+        return transfer.optLong("codeExpiresAt", transfer.optLong("expiresAt"));
     }
 
     static String formatCode(String value) {
@@ -163,7 +167,8 @@ final class TransferData {
                 "direction", owner == null ? "Received" : "Sent");
         if (owner != null) {
             row = json("id", id, "label", label(transfer), "expiresAt", transfer.optLong("expiresAt"),
-                    "direction", "Sent", "owner", owner, "code", transfer.optString("code"));
+                    "direction", "Sent", "owner", owner, "code", transfer.optString("code"),
+                    "codeExpiresAt", codeExpiry(transfer));
         }
         for (int i = 0; owner == null && i < previous.length(); i++) {
             JSONObject found = previous.optJSONObject(i);

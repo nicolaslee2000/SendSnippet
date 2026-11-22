@@ -75,7 +75,7 @@ public final class MainActivity extends ComponentActivity {
     private final List<TransferData.FileItem> files = new ArrayList<>();
     private LinearLayout root, header, tabs, body;
     private ScrollView scroll;
-    private TextView statusLine, expiryLine;
+    private TextView statusLine, expiryLine, codeExpiryLine;
     private ProgressBar progress;
     private Button pauseButton;
     private EditText codeInput;
@@ -125,6 +125,11 @@ public final class MainActivity extends ComponentActivity {
                 String text = TransferData.expires(timed.optLong("expiresAt"));
                 if ("Expired".equals(text) && !"Expired".contentEquals(expiryLine.getText())) render();
                 else expiryLine.setText(text);
+            }
+            if (codeExpiryLine != null && ready != null) {
+                String text = TransferData.expires(TransferData.codeExpiry(ready));
+                if ("Expired".equals(text)) render();
+                else codeExpiryLine.setText(text);
             }
             main.postDelayed(this, 500);
         }
@@ -283,7 +288,7 @@ public final class MainActivity extends ComponentActivity {
 
         int offset = scroll.getScrollY();
         scroll.removeAllViews();
-        statusLine = expiryLine = null;
+        statusLine = expiryLine = codeExpiryLine = null;
         progress = null;
         pauseButton = null;
         body = column();
@@ -395,16 +400,26 @@ public final class MainActivity extends ComponentActivity {
         String id = ready.optString("id");
         if (active) {
             String code = TransferData.formatCode(ready.optString("code"));
+            long codeExpiry = TransferData.codeExpiry(ready);
+            boolean codeActive = codeExpiry > System.currentTimeMillis();
             String link = TransferData.link(id);
             LinearLayout card = column();
             card.setGravity(Gravity.CENTER_HORIZONTAL);
             card.setBackground(shape(16, tint, 0));
             card.setPadding(dp(10), dp(10), dp(10), dp(12));
-            add(card, text("Receive code", 13, accentInk, true), 0);
-            TextView codeText = text(code, 34, accentInk, true);
-            codeText.setGravity(Gravity.CENTER);
-            codeText.setTextIsSelectable(true);
-            add(card, codeText, 1);
+            String codeLabel = codeActive ? "Receive code" : "Receive code expired";
+            add(card, text(codeLabel, 13, accentInk, true), 0);
+            if (codeActive) {
+                TextView codeText = text(code, 34, accentInk, true);
+                codeText.setGravity(Gravity.CENTER);
+                codeText.setTextIsSelectable(true);
+                add(card, codeText, 1);
+                if (code.length() == 4) {
+                    codeExpiryLine = text(TransferData.expires(codeExpiry), 12, muted, false);
+                    codeExpiryLine.setGravity(Gravity.CENTER);
+                    add(card, codeExpiryLine, 0);
+                }
+            }
             ImageView qr = new ImageView(this);
             qr.setImageBitmap(qr(link));
             qr.setContentDescription("QR code for this transfer");
@@ -413,7 +428,7 @@ public final class MainActivity extends ComponentActivity {
             card.addView(qr, qrSpace);
             add(body, card, 10);
             LinearLayout copy = row();
-            rowButton(copy, button("Copy code", false, v -> copy("Receive code", code)));
+            if (codeActive) rowButton(copy, button("Copy code", false, v -> copy("Receive code", code)));
             rowButton(copy, button("Copy link", false, v -> copy("Transfer link", link)));
             add(body, copy, 8);
             add(body, button("Share transfer", true, v -> share(link)), 7);
@@ -431,7 +446,7 @@ public final class MainActivity extends ComponentActivity {
     }
 
     private void renderReceive() {
-        title("Receive a transfer", "Enter a code, paste a link, or scan its QR.");
+        title("Receive a transfer", "Enter the 4-digit code, paste a link, or scan its QR.");
         codeInput = edit("Code or SendSnippet link", codeEntry, false);
         codeInput.setContentDescription("Code or SendSnippet link");
         codeInput.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_GO);
@@ -519,7 +534,7 @@ public final class MainActivity extends ComponentActivity {
         if (active) {
             labels.add("Open transfer"); actions.add(() -> lookup(link));
             labels.add("Copy link"); actions.add(() -> copy("Transfer link", link));
-            if (item.has("code")) {
+            if (item.has("code") && TransferData.codeExpiry(item) > System.currentTimeMillis()) {
                 labels.add("Copy code");
                 actions.add(() -> copy("Receive code", TransferData.formatCode(item.optString("code"))));
             }

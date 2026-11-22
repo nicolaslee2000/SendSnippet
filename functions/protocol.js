@@ -6,6 +6,7 @@ export const MAX_TOTAL = 20 * GIB
 export const MAX_FILES = 20
 export const MAX_TEXT = 64 * 1024
 export const DAY = 86_400_000
+export const SHORT_CODE_TTL = 5 * 60_000
 export const CODE_ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
 const LIFETIMES = new Set([15, 60, 1440])
 
@@ -24,13 +25,24 @@ export const validFile = value => typeof value === 'string' && /^(0|[1-9][0-9]?)
 export const normalizeCode = value => typeof value === 'string'
   ? value.toUpperCase().replace(/[\s-]/g, '').replace(/O/g, '0').replace(/[IL]/g, '1')
   : ''
-export const validCode = value => value.length === 8 && [...value].every(c => CODE_ALPHABET.includes(c))
-export const makeCode = () => Array.from({ length: 8 }, () => CODE_ALPHABET[randomInt(32)]).join('')
+export const isShortCode = value => /^[0-9]{4}$/.test(value)
+export const validCode = value => isShortCode(value) ||
+  (value.length === 8 && [...value].every(c => CODE_ALPHABET.includes(c)))
+export function makeCode(length = 8) {
+  if (length === 4) return String(randomInt(10_000)).padStart(4, '0')
+  return Array.from({ length: 8 }, () => CODE_ALPHABET[randomInt(32)]).join('')
+}
+
+export function codeDeadline(code, readyAt, expiresAt) {
+  return isShortCode(code) ? Math.min(readyAt + SHORT_CODE_TTL, expiresAt) : expiresAt
+}
 export const ownerMatches = (value, digest) => validOwner(value) &&
   timingSafeEqual(Buffer.from(hash(value), 'hex'), Buffer.from(digest, 'hex'))
 
 export function validateDraft(body) {
-  const { id, owner, files = [], text = '', lifetime } = body ?? {}
+  // Clients released before four-digit codes omit codeLength.
+  const { id, owner, files = [], text = '', lifetime, codeLength = 8 } = body ?? {}
+  if (![4, 8].includes(codeLength)) throw new ApiError(400, 'Choose a supported code length.')
   if (!validId(id) || !validOwner(owner) || idFor(owner) !== id) throw new ApiError(400, 'Invalid transfer credentials.')
   if (!LIFETIMES.has(lifetime)) throw new ApiError(400, 'Choose 15 minutes, 1 hour, or 24 hours.')
   if (!Array.isArray(files) || files.length > MAX_FILES) throw new ApiError(400, 'Add up to 20 files.')
@@ -50,7 +62,7 @@ export function validateDraft(body) {
     return { id: String(index), name: name && name !== '.' && name !== '..' ? name : 'file-' + (index + 1), size: file.size }
   })
   if (total > MAX_TOTAL) throw new ApiError(400, 'One transfer can contain up to 20 GiB.')
-  return { id, owner, text: text.toWellFormed(), lifetime, files: manifest, total }
+  return { id, owner, text: text.toWellFormed(), lifetime, codeLength, files: manifest, total }
 }
 
 export function disposition(name) {

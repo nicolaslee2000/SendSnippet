@@ -4,7 +4,7 @@ export const byteLength = text => new TextEncoder().encode(text).length
 const HISTORY = 'sendsnippet.activity.v1'
 const publicOrigins = ['https://sendsnippet.web.app', 'https://sendsnippet.firebaseapp.com']
 const linkPattern = /^[\w-]{32}$/
-const codePattern = /^[0-9A-HJKMNP-TV-Z]{8}$/
+const codePattern = /^(?:[0-9]{4}|[0-9A-HJKMNP-TV-Z]{8})$/
 
 export async function api(operation, payload, signal) {
   const response = await fetch('/api/' + operation, payload === undefined ? { signal } : {
@@ -63,7 +63,7 @@ export function transferLink(id) {
   const origin = publicOrigins.includes(location.origin) ? publicOrigins[1] : location.origin
   return origin + '/receive#' + id
 }
-export const formatCode = value => value ? value.slice(0, 4) + ' ' + value.slice(4) : ''
+export const formatCode = value => value?.length === 8 ? value.slice(0, 4) + ' ' + value.slice(4) : value
 export const fromHash = () => linkPattern.test(location.hash.slice(1)) ? location.hash.slice(1) : ''
 
 export function credential(value) {
@@ -82,7 +82,7 @@ export function credential(value) {
     const code = entry.toUpperCase().replace(/[\s-]/g, '').replace(/O/g, '0').replace(/[IL]/g, '1')
     if (codePattern.test(code)) return { code }
   }
-  throw new Error('Enter an 8-character code or paste a SendSnippet link.')
+  throw new Error('Enter a 4-digit code or paste a SendSnippet link.')
 }
 
 export function sizeLabel(bytes) {

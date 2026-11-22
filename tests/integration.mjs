@@ -31,6 +31,7 @@ async function call(operation, body, status = 200) {
 
 const one = credentials()
 const two = credentials()
+const short = credentials()
 try {
   const body = { ...one, lifetime: 15, text: 'A snippet with UTF-8 → 한글\n\nMore text' }
   const text = (await call('create', body)).transfer
@@ -41,9 +42,27 @@ try {
   await call('receive', { id: one.id }, 404)
   console.log('Text, code normalization, idempotency and owner-only revoke passed.')
 
+  const shortText = 'Four-digit code and full-length link'
+  const sendAt = Date.now()
+  const { transfer } = await call('create', { ...short, codeLength: 4, lifetime: 60, text: shortText })
+  assert.match(transfer.code, /^\d{4}$/)
+  assert.ok(transfer.codeExpiresAt > sendAt + 290_000 && transfer.codeExpiresAt <= Date.now() + 300_000)
+  assert.equal((await call('receive', { code: transfer.code })).text, shortText)
+  if (config.emulator) {
+    const document = 'http://127.0.0.1:8187/v1/projects/demo-sendsnippet/databases/(default)/documents/ssTransfers/' + short.id
+    const patched = await fetch(document + '?updateMask.fieldPaths=codeExpiresAt', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer owner' },
+      body: JSON.stringify({ fields: { codeExpiresAt: { integerValue: String(Date.now() - 1000) } } }),
+    })
+    assert.equal(patched.status, 200)
+    await call('receive', { code: transfer.code }, 404)
+  }
+  assert.equal((await call('receive', { id: short.id })).text, shortText)
+  console.log('Four-digit codes and separate link expiry passed.')
+
   const size = 6 * 1024 ** 2 + 7
   const content = randomBytes(size)
-  const { token, missing } = await call('create', { ...two, lifetime: 60,
+  const { token, missing } = await call('create', { ...two, lifetime: 60, codeLength: 4,
     text: 'Two files with a note', files: [{ name: 'test 한글.bin', size }, { name: 'empty.txt', size: 0 }],
   })
   assert.deepEqual(missing, ['0', '1'])
@@ -56,6 +75,8 @@ try {
   await uploadBytesResumable(ref(storage, parent + '/0'), content, metadata)
   await uploadBytesResumable(ref(storage, parent + '/1'), new Uint8Array(), metadata)
   const done = await call('complete', two)
+  assert.match(done.code, /^\d{4}$/)
+  assert.ok(done.codeExpiresAt > Date.now() + 290_000)
   assert.deepEqual((await call('complete', two)).files, done.files)
   const received = await call('receive', { code: done.code })
   assert.equal(received.text, 'Two files with a note')
@@ -71,6 +92,6 @@ try {
   await call('ticket', { id: two.id, file: '0' }, 404)
   console.log('Multi-file resumable upload, empty file, storage rule checks, verified downloads and revoke passed.')
 } finally {
-  await Promise.allSettled([call('revoke', one), call('revoke', two)])
+  await Promise.allSettled([call('revoke', one), call('revoke', two), call('revoke', short)])
   await deleteApp(app)
 }
