@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowDown, ArrowDownToLine, ArrowLeftRight, ArrowRight, ArrowUpRight, Check, ChevronDown,
+  ArrowDownToLine, ArrowLeftRight, ArrowRight, ArrowUpRight, Check, ChevronDown,
   Clipboard, Clock3, Code2, Copy, File, FileText, History, Link2, LoaderCircle, LockKeyhole,
   Moon, Pause, Play, Plus, QrCode, Send, Share2, Smartphone, Sun, UploadCloud, X,
 } from 'lucide-react'
@@ -424,6 +424,7 @@ function SharePanel({ item, now, copy, notify, revoke, close }) {
 
 function ReceivePanel({ now, copy, notify, remember, openRequest }) {
   const [value, setValue] = useState('')
+  const [linkEntry, setLinkEntry] = useState(null)
   const [error, setError] = useState('')
   const [item, setItem] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -431,10 +432,11 @@ function ReceivePanel({ now, copy, notify, remember, openRequest }) {
   const [downloads, setDownloads] = useState([])
   const request = useRef()
 
-  async function receive(input) {
+  async function receive(input, autoDownload = false) {
     request.current?.abort()
     const signal = new AbortController()
     request.current = signal
+    if (!autoDownload) setValue('')
     setError('')
     setItem(null)
     setBusy(true)
@@ -445,8 +447,12 @@ function ReceivePanel({ now, copy, notify, remember, openRequest }) {
       setItem(result)
       remember(result)
       window.history.replaceState(null, '', '/receive#' + result.id)
+      if (autoDownload && result.files.length) startDownloads(result)
     } catch (err) {
-      if (!signal.signal.aborted) setError(err.message)
+      if (!signal.signal.aborted) {
+        if (autoDownload) setValue('')
+        setError(err.message)
+      }
     } finally {
       if (!signal.signal.aborted) setBusy(false)
     }
@@ -456,19 +462,43 @@ function ReceivePanel({ now, copy, notify, remember, openRequest }) {
     return () => request.current?.abort()
   }, [openRequest])
 
+  async function requestDownload(id, file) {
+    const { url } = await api('ticket', { id, file: file.id })
+    const link = document.createElement('a')
+    link.href = url
+    link.download = file.name
+    link.click()
+  }
+
+  async function startDownloads(transfer) {
+    const keys = new Set(transfer.files.map(file => transfer.id + '/' + file.id))
+    setDownloads(list => [...list, ...keys])
+    let started = 0
+    for (const file of transfer.files) {
+      try {
+        await requestDownload(transfer.id, file)
+        started++
+      } catch {
+        // A failed ticket should not prevent the other files from downloading.
+      }
+    }
+    setDownloads(list => list.filter(key => !keys.has(key)))
+    notify(started === transfer.files.length
+      ? 'Downloads requested'
+      : 'Some files couldn’t start. Use the file’s download button to retry.')
+  }
+
   async function download(file) {
-    setDownloads(list => [...list, file.id])
+    const key = item.id + '/' + file.id
+    setDownloads(list => [...list, key])
     setError('')
     try {
-      const { url } = await api('ticket', { id: item.id, file: file.id })
-      const link = document.createElement('a')
-      link.href = url
-      link.download = file.name
-      link.click()
+      await requestDownload(item.id, file)
       notify('Download requested')
     } catch (err) { setError(err.message) }
-    finally { setDownloads(list => list.filter(id => id !== file.id)) }
+    finally { setDownloads(list => list.filter(value => value !== key)) }
   }
+
   function saveText() {
     const url = URL.createObjectURL(new Blob([item.text], { type: 'text/plain;charset=utf-8' }))
     const link = document.createElement('a')
@@ -479,18 +509,33 @@ function ReceivePanel({ now, copy, notify, remember, openRequest }) {
   }
 
   return <div className="panel">
-    <SectionTitle title="Receive a transfer">Enter the 4-digit code, paste a link, or scan its QR.</SectionTitle>
-    <form className="receive-form" onSubmit={event => { event.preventDefault(); receive(value) }}>
-      <label className="field-label" htmlFor="receive-code">Code or link</label>
-      <div className="receive-entry">
-        <input id="receive-code" placeholder="1234" value={value} maxLength="300"
-          onChange={event => setValue(event.target.value)} spellCheck="false" autoComplete="off" autoCapitalize="characters" />
-        <IconButton icon={QrCode} label="Scan QR code" onClick={() => setScanning(true)} />
+    <SectionTitle title="Receive a transfer">Enter the 4-digit code.</SectionTitle>
+    <div className="receive-form" aria-busy={busy}>
+      <input id="receive-code" className="code-entry" aria-label="4-digit code" placeholder="1234"
+        inputMode="numeric" pattern="[0-9]{4}" maxLength={4} autoComplete="off"
+        value={value} disabled={busy} spellCheck="false"
+        onFocus={event => event.target.select()}
+        onChange={event => {
+          const digits = event.target.value
+          if (!/^[0-9]{0,4}$/.test(digits)) return
+          setValue(digits)
+          if (digits.length === 4) receive(digits, true)
+        }} />
+      {busy && <p className="receive-status" role="status"><LoaderCircle size={15} /> Looking up transfer…</p>}
+      <div className="action-group">
+        <Button icon={Link2} onClick={() => setLinkEntry(linkEntry === null ? '' : null)}>Open link</Button>
+        <Button icon={QrCode} aria-label="Scan QR code" onClick={() => setScanning(true)}>Scan QR</Button>
       </div>
-      <Button kind="primary" type="submit" icon={busy ? LoaderCircle : ArrowDown} disabled={busy || !value.trim()}>
-        {busy ? 'Looking up transfer…' : 'Receive transfer'}
-      </Button>
-    </form>
+      {linkEntry !== null && <form className="link-entry" onSubmit={event => {
+        event.preventDefault()
+        receive(linkEntry)
+        setLinkEntry(null)
+      }}>
+        <input autoFocus aria-label="SendSnippet link" placeholder="Paste a SendSnippet link" maxLength={300}
+          value={linkEntry} onChange={event => setLinkEntry(event.target.value)} />
+        <Button kind="primary" type="submit" disabled={!linkEntry.trim()}>Open transfer</Button>
+      </form>}
+    </div>
     <Notice>{error}</Notice>
     {item && <div className="received">
       <div className="receive-summary">
@@ -508,11 +553,10 @@ function ReceivePanel({ now, copy, notify, remember, openRequest }) {
         <span className="file-icon"><File size={16} /></span>
         <div><strong>{file.name}</strong><small>{sizeLabel(file.size)}</small></div>
         <IconButton icon={ArrowDownToLine} label={'Download ' + file.name}
-          disabled={item.expiresAt <= now || downloads.includes(file.id)} onClick={() => download(file)} />
+          disabled={item.expiresAt <= now || downloads.includes(item.id + '/' + file.id)} onClick={() => download(file)} />
       </li>)}</ul>}
     </div>}
     {scanning && <Scanner close={() => setScanning(false)} select={input => {
-      setValue(input)
       setScanning(false)
       receive(input)
     }} />}

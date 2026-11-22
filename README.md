@@ -4,9 +4,9 @@
 
 Send files and text between devices without an account. Add up to 20 files, up to 10 GiB per file and 20 GiB total, and an optional text snippet up to 64 KiB. Share a 4-digit code, link, or QR. The code is valid for 5 minutes after the transfer is ready. The link and QR stay valid for the chosen transfer lifetime of 15 minutes, 1 hour, or 24 hours.
 
-The web app supports drag and drop, clipboard files, QR scanning, dark mode, local activity, and sender revocation. Keep the tab open to pause or resume an in-progress file upload. A retry can also reuse files that finished uploading.
+The web app supports drag and drop, clipboard files, QR scanning, dark mode, local activity, and sender revocation. Entering the fourth digit opens the snippet and requests file downloads automatically. Keep the tab open to pause or resume an in-progress file upload. A retry can also reuse files that finished uploading.
 
-Android 8.0 and newer can send from the system share sheet or selected-text actions, open verified SendSnippet links, scan a QR, and save files to Downloads. Long-press the app icon for Send and Receive shortcuts. Use **Quick access → Add Receive tile** to open Receive from Quick Settings. File uploads run in a foreground service with progress and pause controls. Files selected using Android’s document picker can be resumed after reopening the app if Android still grants access to them.
+Android 8.0 and newer can send from the system share sheet or selected-text actions, open verified SendSnippet links, scan a QR, and save files to Downloads. The Receive field opens the number pad and starts file downloads after the fourth digit matches. Long-press the app icon for Send and Receive shortcuts. Use **Quick access → Add Receive tile** to open Receive from Quick Settings. File uploads run in a foreground service with progress and pause controls. Files selected using Android’s document picker can be resumed after reopening the app if Android still grants access to them.
 
 ## Local development
 

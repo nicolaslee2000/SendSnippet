@@ -20,6 +20,7 @@ import java.util.Locale;
 final class TransferData {
     static final long GIB = 1L << 30;
     static final int MAX_TEXT = 64 * 1024;
+    static final String READY_PREF = "lastReady";
     private static final SecureRandom RANDOM = new SecureRandom();
 
     static JSONObject json(Object... fields) {

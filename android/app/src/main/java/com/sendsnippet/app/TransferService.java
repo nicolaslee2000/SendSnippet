@@ -130,7 +130,7 @@ public final class TransferService extends Service {
             TransferData.remember(this, result, owner);
             releaseUris(files);
             TransferData.prefs(this).edit().remove("draft").remove("session." + id)
-                    .putString("lastReady", result.toString()).apply();
+                    .putString(TransferData.READY_PREF, result.toString()).apply();
             message = "Transfer ready";
         } catch (CancellationException stopped) {
             message = "Upload stopped. Open SendSnippet to resume.";

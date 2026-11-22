@@ -9,6 +9,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
@@ -24,8 +25,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -83,6 +86,7 @@ public final class MainActivity extends ComponentActivity {
     private int tab, lifetime = 1, lookupVersion;
     private boolean loading, adding, busy, dark;
     private String note = "", codeEntry = "", message = "", textToSave = "";
+    private String queueingTransfer = "";
     private int paper, page, ink, tint, muted, edge, accent, accentInk;
     private TransferService.State lastState;
 
@@ -106,11 +110,13 @@ public final class MainActivity extends ComponentActivity {
             });
     private final ActivityResultLauncher<ScanOptions> scanner = registerForActivityResult(
             new ScanContract(), result -> {
-                if (result.getContents() != null) {
-                    codeEntry = result.getContents();
-                    lookup(codeEntry);
-                }
+                if (result.getContents() != null) lookup(result.getContents());
             });
+    // A short text transfer can be ready before the progress timer sees it running.
+    private final SharedPreferences.OnSharedPreferenceChangeListener readyListener = (preferences, key) -> {
+        if (TransferData.READY_PREF.equals(key) && tab == 0 && preferences.contains(key)) render();
+    };
+
     private final Runnable ticker = new Runnable() {
         @Override public void run() {
             TransferService.State state = TransferService.status;
@@ -124,12 +130,12 @@ public final class MainActivity extends ComponentActivity {
             if (expiryLine != null && timed != null) {
                 String text = TransferData.expires(timed.optLong("expiresAt"));
                 if ("Expired".equals(text) && !"Expired".contentEquals(expiryLine.getText())) render();
-                else expiryLine.setText(text);
+                else if (!text.contentEquals(expiryLine.getText())) expiryLine.setText(text);
             }
             if (codeExpiryLine != null && ready != null) {
                 String text = TransferData.expires(TransferData.codeExpiry(ready));
                 if ("Expired".equals(text)) render();
-                else codeExpiryLine.setText(text);
+                else if (!text.contentEquals(codeExpiryLine.getText())) codeExpiryLine.setText(text);
             }
             main.postDelayed(this, 500);
         }
@@ -140,7 +146,8 @@ public final class MainActivity extends ComponentActivity {
         if (state != null) {
             tab = state.getInt("tab");
             note = state.getString("note", "");
-            codeEntry = state.getString("code", "");
+            String savedCode = state.getString("code", "");
+            if (savedCode.matches("[0-9]{0,4}")) codeEntry = savedCode;
             lifetime = state.getInt("lifetime", 1);
             textToSave = state.getString("textToSave", "");
             received = parse(state.getString("received"));
@@ -154,11 +161,15 @@ public final class MainActivity extends ComponentActivity {
 
     @Override protected void onStart() {
         super.onStart();
+        SharedPreferences prefs = TransferData.prefs(this);
+        prefs.registerOnSharedPreferenceChangeListener(readyListener);
+        if (tab == 0 && ready == null && prefs.contains(TransferData.READY_PREF)) render();
         main.removeCallbacks(ticker);
         main.post(ticker);
     }
 
     @Override protected void onStop() {
+        TransferData.prefs(this).unregisterOnSharedPreferenceChangeListener(readyListener);
         main.removeCallbacks(ticker);
         super.onStop();
     }
@@ -248,8 +259,7 @@ public final class MainActivity extends ComponentActivity {
         if (RECEIVE.equals(action)) { tab = 1; return; }
         if (Intent.ACTION_VIEW.equals(action) && intent.getData() != null) {
             tab = 1;
-            codeEntry = intent.getData().toString();
-            lookup(codeEntry);
+            lookup(intent.getData().toString());
             return;
         }
         boolean process = Intent.ACTION_PROCESS_TEXT.equals(action);
@@ -446,28 +456,42 @@ public final class MainActivity extends ComponentActivity {
     }
 
     private void renderReceive() {
-        title("Receive a transfer", "Enter the 4-digit code, paste a link, or scan its QR.");
-        codeInput = edit("Code or SendSnippet link", codeEntry, false);
-        codeInput.setContentDescription("Code or SendSnippet link");
-        codeInput.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_GO);
-        codeInput.setOnEditorActionListener((view, action, event) -> {
-            lookup(codeEntry);
-            return true;
+        title("Receive a transfer", "Enter the 4-digit code.");
+        EditText digits = edit("1234", codeEntry, false);
+        digits.setContentDescription("4-digit code");
+        digits.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+        digits.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+        digits.setFilters(new InputFilter[]{new InputFilter.LengthFilter(4)});
+        digits.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        digits.setTextSize(27);
+        digits.setLetterSpacing(.2f);
+        digits.setGravity(Gravity.CENTER);
+        digits.setSelectAllOnFocus(true);
+        digits.setEnabled(!loading);
+        codeInput = digits;
+        watch(digits, value -> {
+            codeEntry = value;
+            if (value.length() == 4) main.post(() -> {
+                if (tab == 1 && codeInput == digits && !loading && value.equals(codeEntry)) {
+                    lookup(value, true);
+                }
+            });
         });
-        watch(codeInput, value -> codeEntry = value);
-        add(body, codeInput, 0);
+        add(body, digits, 0);
+        if (loading) {
+            TextView progressText = text("Looking up transfer…", 13, muted, false);
+            progressText.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+            add(body, progressText, 6);
+        }
         LinearLayout methods = row();
-        rowButton(methods, button("Paste", false, v -> {
+        rowButton(methods, button("Paste link", false, v -> {
             String clip = clipboard();
-            if (clip != null) codeInput.setText(clip.trim());
+            if (clip != null) lookup(clip);
         }));
         rowButton(methods, button("Scan QR", false, v ->
                 scanner.launch(new ScanOptions().setDesiredBarcodeFormats(ScanOptions.QR_CODE)
                         .setPrompt("Scan a SendSnippet QR").setBeepEnabled(false).setOrientationLocked(false))));
         add(body, methods, 8);
-        Button receive = button(loading ? "Looking up…" : "Receive transfer", true, v -> lookup(codeEntry));
-        receive.setEnabled(!loading);
-        add(body, receive, 8);
         if (received == null) return;
 
         add(body, text(TransferData.label(received), 18, ink, true), 17);
@@ -499,7 +523,7 @@ public final class MainActivity extends ComponentActivity {
             JSONObject file = manifest.optJSONObject(i);
             if (file == null) continue;
             item(body, file.optString("name"), TransferData.size(file.optLong("size")), "Download",
-                    () -> download(id, file), expiry > System.currentTimeMillis());
+                    () -> download(id, file), expiry > System.currentTimeMillis() && !id.equals(queueingTransfer));
         }
     }
 
@@ -629,9 +653,11 @@ public final class MainActivity extends ComponentActivity {
                 }).show();
     }
 
-    private void lookup(String input) {
+    private void lookup(String input) { lookup(input, false); }
+
+    private void lookup(String input, boolean autoDownload) {
         tab = 1;
-        codeEntry = input;
+        codeEntry = autoDownload ? input : "";
         received = null;
         message = "";
         int version = ++lookupVersion;
@@ -648,31 +674,64 @@ public final class MainActivity extends ComponentActivity {
             loading = false;
             received = result;
             TransferData.remember(this, result, null);
+            if (autoDownload) downloadFiles(result);
             render();
         }, error -> {
             if (lookupVersion != version) return;
             loading = false;
+            if (autoDownload) codeEntry = "";
+            showError(error);
+        });
+    }
+
+    private void downloadFiles(JSONObject transfer) {
+        JSONArray manifest = transfer.optJSONArray("files");
+        if (manifest == null || manifest.length() == 0) return;
+        String id = transfer.optString("id");
+        queueingTransfer = id;
+        work(() -> {
+            int started = 0;
+            for (int i = 0; i < manifest.length(); i++) {
+                try {
+                    queueDownload(id, manifest.getJSONObject(i));
+                    started++;
+                } catch (Exception error) {
+                    // Continue starting the remaining files if one request fails.
+                }
+            }
+            return started;
+        }, started -> {
+            if (id.equals(queueingTransfer)) queueingTransfer = "";
+            if (started == manifest.length()) {
+                toast("Downloading to Downloads");
+            } else {
+                toast("Some files couldn’t start. Tap Download to try again.");
+            }
+            if (tab == 1 && received == transfer) render();
+        }, error -> {
+            if (id.equals(queueingTransfer)) queueingTransfer = "";
             showError(error);
         });
     }
 
     private void download(String id, JSONObject file) {
+        work(() -> queueDownload(id, file), ignored -> toast("Downloading to Downloads"), this::showError);
+    }
+
+    private long queueDownload(String id, JSONObject file) throws Exception {
         String name = file.optString("name");
-        work(() -> {
-            JSONObject ticket = TransferApi.request("ticket", TransferData.json("id", id, "file", file.optString("id")));
-            String url = ticket.getString("url");
-            if (BuildConfig.LOCAL_EMULATOR && url.startsWith("/api/local-file/")) url = BuildConfig.BASE_URL + url;
-            Uri destination = Uri.parse(url);
-            if (!"https".equals(destination.getScheme()) && !BuildConfig.LOCAL_EMULATOR) {
-                throw new IllegalArgumentException("Couldn’t verify the download URL.");
-            }
-            DownloadManager.Request request = new DownloadManager.Request(destination)
-                    .setTitle(name).setDescription("SendSnippet transfer")
-                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadName(name))
-                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-            getSystemService(DownloadManager.class).enqueue(request);
-            return true;
-        }, ignored -> toast("Downloading to Downloads"), this::showError);
+        JSONObject ticket = TransferApi.request("ticket", TransferData.json("id", id, "file", file.optString("id")));
+        String url = ticket.getString("url");
+        if (BuildConfig.LOCAL_EMULATOR && url.startsWith("/api/local-file/")) url = BuildConfig.BASE_URL + url;
+        Uri destination = Uri.parse(url);
+        if (!"https".equals(destination.getScheme()) && !BuildConfig.LOCAL_EMULATOR) {
+            throw new IllegalArgumentException("Couldn’t verify the download URL.");
+        }
+        DownloadManager.Request request = new DownloadManager.Request(destination)
+                .setTitle(name).setDescription("SendSnippet transfer")
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadName(name))
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        return getSystemService(DownloadManager.class).enqueue(request);
     }
 
     private synchronized String downloadName(String name) {
@@ -950,10 +1009,10 @@ public final class MainActivity extends ComponentActivity {
 
     private void toast(String value) { Toast.makeText(this, value, Toast.LENGTH_SHORT).show(); }
     private boolean hasDraft() { return TransferData.prefs(this).contains("draft"); }
-    private JSONObject savedReady() { return parse(TransferData.prefs(this).getString("lastReady", null)); }
+    private JSONObject savedReady() { return parse(TransferData.prefs(this).getString(TransferData.READY_PREF, null)); }
 
     private void clearReady() {
-        TransferData.prefs(this).edit().remove("lastReady").apply();
+        TransferData.prefs(this).edit().remove(TransferData.READY_PREF).apply();
         ready = null;
     }
 
