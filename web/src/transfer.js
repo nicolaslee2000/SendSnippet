@@ -2,6 +2,7 @@ const GIB = 1024 ** 3
 export const limit = { file: 10 * GIB, total: 20 * GIB, files: 20, text: 64 * 1024 }
 export const byteLength = text => new TextEncoder().encode(text).length
 const HISTORY = 'sendsnippet.activity.v1'
+const publicOrigins = ['https://sendsnippet.web.app', 'https://sendsnippet.firebaseapp.com']
 const linkPattern = /^[\w-]{32}$/
 const codePattern = /^[0-9A-HJKMNP-TV-Z]{8}$/
 
@@ -58,7 +59,10 @@ export async function keyPair() {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(owner))
   return { id: encodeKey(new Uint8Array(digest, 0, 24)), owner }
 }
-export const transferLink = id => location.origin + '/receive#' + id
+export function transferLink(id) {
+  const origin = publicOrigins.includes(location.origin) ? publicOrigins[1] : location.origin
+  return origin + '/receive#' + id
+}
 export const formatCode = value => value ? value.slice(0, 4) + ' ' + value.slice(4) : ''
 export const fromHash = () => linkPattern.test(location.hash.slice(1)) ? location.hash.slice(1) : ''
 
@@ -69,7 +73,7 @@ export function credential(value) {
       const link = new URL(entry)
       const id = link.hash.slice(1)
       if ((link.origin === location.origin ||
-           ['https://sendsnippet.web.app', 'https://sendsnippet.firebaseapp.com'].includes(link.origin))
+           publicOrigins.includes(link.origin))
           && link.pathname === '/receive' && linkPattern.test(id)) return { id }
     } catch {
       // Malformed links use the same validation message as malformed codes.

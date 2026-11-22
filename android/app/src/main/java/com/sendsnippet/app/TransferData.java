@@ -49,7 +49,8 @@ final class TransferData {
     }
 
     static String link(String id) {
-        return BuildConfig.BASE_URL + "/receive#" + id;
+        String origin = BuildConfig.LOCAL_EMULATOR ? BuildConfig.BASE_URL : "https://sendsnippet.firebaseapp.com";
+        return origin + "/receive#" + id;
     }
 
     static JSONObject credential(String input) {
