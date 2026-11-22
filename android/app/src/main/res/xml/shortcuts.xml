@@ -1,0 +1,12 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut android:shortcutId="send" android:enabled="true" android:icon="@drawable/ic_transfer"
+        android:shortcutShortLabel="@string/send_shortcut">
+        <intent android:action="com.sendsnippet.app.SEND" android:targetPackage="com.sendsnippet.app"
+            android:targetClass="com.sendsnippet.app.MainActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="receive" android:enabled="true" android:icon="@drawable/ic_transfer"
+        android:shortcutShortLabel="@string/receive_shortcut">
+        <intent android:action="com.sendsnippet.app.RECEIVE" android:targetPackage="com.sendsnippet.app"
+            android:targetClass="com.sendsnippet.app.MainActivity" />
+    </shortcut>
+</shortcuts>

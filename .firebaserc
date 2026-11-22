@@ -1,5 +1,27 @@
 {
   "projects": {
     "default": "sendsnippet"
+  },
+  "targets": {
+    "sendsnippet": {
+      "storage": {
+        "transfers": [
+          "sendsnippet-transfer-eu"
+        ],
+        "legacy": [
+          "sendsnippet.appspot.com"
+        ]
+      }
+    },
+    "demo-sendsnippet": {
+      "storage": {
+        "transfers": [
+          "sendsnippet-transfer-eu"
+        ],
+        "legacy": [
+          "demo-sendsnippet.appspot.com"
+        ]
+      }
+    }
   }
 }

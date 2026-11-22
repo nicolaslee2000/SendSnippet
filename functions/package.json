@@ -1,26 +1,14 @@
 {
-  "name": "functions",
-  "scripts": {
-    "build": "env-cmd -f .env tsc",
-    "build:watch": "env-cmd -f .env tsc --watch",
-    "serve": "npm run build && firebase emulators:start --only functions",
-    "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
-  },
+  "name": "sendsnippet-backend",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
   "engines": {
-    "node": "18"
+    "node": "22"
   },
-  "main": "lib/index.js",
   "dependencies": {
-    "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.3.1"
-  },
-  "devDependencies": {
-    "env-cmd": "^10.1.0",
-    "firebase-functions-test": "^3.1.0",
-    "typescript": "^4.9.0"
-  },
-  "private": true
+    "express": "^5.3.0",
+    "firebase-admin": "^14.5.1",
+    "firebase-functions": "^7.4.0"
+  }
 }

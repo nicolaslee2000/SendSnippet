@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">SendSnippet</string>
+    <string name="send_shortcut">Send a transfer</string>
+    <string name="receive_shortcut">Receive a transfer</string>
+    <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:colorAccent">#5943DC</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowBackground">#F7F6FB</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>

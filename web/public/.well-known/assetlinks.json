@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.sendsnippet.app",
+      "sha256_cert_fingerprints": [
+        "2D:57:FF:DE:E8:5B:EA:C3:BA:FB:59:38:55:E6:D3:FF:68:10:9C:E1:B7:AC:78:A8:BD:BC:3F:4B:87:37:C7:96"
+      ]
+    }
+  }
+]

@@ -1,0 +1,13 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /sendsnippet-v2/{transfer}/{file} {
+      allow create: if request.auth != null
+        && request.auth.token.ssId == transfer
+        && request.time.toMillis() < request.auth.token.ssUntil
+        && request.resource.size == request.auth.token.ssSizes[file]
+        && request.resource.contentType == 'application/octet-stream'
+        && firestore.get(/databases/(default)/documents/ssTransfers/$(transfer)).data.state == 'draft';
+    }
+  }
+}
